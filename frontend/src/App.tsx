@@ -6,12 +6,18 @@ import {
   Route,
   NavLink,
 } from "react-router-dom";
+import useData from "./hooks/useData";
+import { Telemetry } from "./lib/definitions";
 
 const Home = lazy(() => import("./pages/Home"));
 const Control = lazy(() => import("./pages/Control"));
 const Packet = lazy(() => import("./pages/Packet"));
 
 function App() {
+  const { data, error } = useData<Telemetry>(
+    "http://localhost:3001/api/stream"
+  );
+
   return (
     <Router>
       <div>
@@ -29,7 +35,10 @@ function App() {
         </nav>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/control" element={<Control />} />
+          <Route
+            path="/control"
+            element={<Control data={data} error={error} />}
+          />
           <Route path="/packet" element={<Packet />} />
         </Routes>
       </div>

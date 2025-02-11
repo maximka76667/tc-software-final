@@ -1,5 +1,6 @@
-import useIntervalIdStore from "../store";
-import { sendRandomData } from "../utils/utils";
+import { memo } from "react";
+import { sendRandomData } from "../lib/utils";
+import { useIntervalIdStore } from "../store";
 
 const Packet = () => {
   const { intervalId, setIntervalId } = useIntervalIdStore();
@@ -21,4 +22,4 @@ const Packet = () => {
   );
 };
 
-export default Packet;
+export default memo(Packet);

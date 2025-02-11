@@ -24,3 +24,20 @@ export async function sendRandomData() {
     console.error("Error sending random data:", error);
   }
 }
+
+export const arrayUntil = (n: number) => {
+  const res: number[] = [];
+  for (let i = 0; i < n; i++) {
+    res.push(i);
+  }
+  return res;
+};
+
+export const addAndGetLastNElements = <T>(
+  array: T[],
+  newValue: T,
+  n: number
+) => {
+  const newValues = [...array, newValue].slice(-n);
+  return newValues;
+};
