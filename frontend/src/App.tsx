@@ -1,41 +1,39 @@
-import { useEffect, useState } from "react";
+import { lazy } from "react";
 import "./App.css";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  NavLink,
+} from "react-router-dom";
+
+const Home = lazy(() => import("./pages/Home"));
+const Control = lazy(() => import("./pages/Control"));
+const Packet = lazy(() => import("./pages/Packet"));
 
 function App() {
-  const [error, setError] = useState("");
-  const [data, setData] = useState<{
-    elevation: number;
-    velocity: number;
-    voltage: number;
-    current: number;
-  } | null>(null);
-
-  useEffect(() => {
-    // Establish an SSE connection to receive sensor data.
-    const eventSource = new EventSource("http://localhost:3000/api/stream");
-    eventSource.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      setData(data);
-    };
-
-    // Handle errors
-    eventSource.onerror = () => {
-      setError("Connection lost. Trying to reconnect...");
-      eventSource.close();
-    };
-
-    // Cleanup when component unmounts
-    return () => eventSource.close();
-  });
-
   return (
-    <div>
-      <p>{data?.elevation || "N/A"}</p>
-      <p>{data?.velocity || "N/A"}</p>
-      <p>{data?.voltage || "N/A"}</p>
-      <p>{data?.current || "N/A"}</p>
-      <p>{error}</p>
-    </div>
+    <Router>
+      <div>
+        <h1>My React Router App</h1>
+        <nav>
+          <li>
+            <NavLink to="/">Home</NavLink>
+          </li>
+          <li>
+            <NavLink to={"/control"}>Control</NavLink>
+          </li>
+          <li>
+            <NavLink to={"/packet"}>Packet</NavLink>
+          </li>
+        </nav>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/control" element={<Control />} />
+          <Route path="/packet" element={<Packet />} />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 
