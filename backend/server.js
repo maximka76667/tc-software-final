@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const { default: errorHandler } = require("./middlewares/errorHandler");
 const app = express();
 const PORT = 3001;
 
@@ -71,13 +72,30 @@ app.post("/api/data", (req, res) => {
 });
 
 // NEW: POST endpoint to receive control commands from the control panel
-app.post("/api/command", (req, res) => {
+app.post("/api/command", (req, res, next) => {
   const { command } = req.body;
   console.log("Received command:", command);
+
+  if (command === "error") {
+    return next(new Error("Error on executing command"));
+  }
+
+  if (command === "turn-on") {
+    return res.status(300).json({ message: "Not allowed" });
+  }
+
+  if (command === "stop") {
+    return res
+      .status(201)
+      .json({ message: "Be careful! Transport is stoping!" });
+  }
+
   // Here you could add logic to adjust the vehicle's state or trigger actions.
   // For now, we simply acknowledge the command.
-  res.json({ success: true, command });
+  return res.status(200).json({ message: command });
 });
+
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

@@ -3,6 +3,9 @@ import { LineChart } from "@mui/x-charts";
 import { arrayUntil } from "../lib/utils";
 import { Telemetry } from "../lib/definitions";
 import { useTelemetryStore } from "../store";
+import { useSnackbar, VariantType } from "notistack";
+import { sendCommand } from "../lib/api";
+import { showResponse } from "../lib/notifications";
 
 interface ControlProps {
   data: Telemetry | null;
@@ -11,9 +14,34 @@ interface ControlProps {
 
 const Control = ({ data, error }: ControlProps) => {
   const { elevation, velocity, current, voltage } = useTelemetryStore();
-  console.log("Render");
+  const { enqueueSnackbar } = useSnackbar();
+
+  const showSnackbar = (
+    message: string,
+    variant: VariantType,
+    autoHideDuration: number
+  ) => {
+    enqueueSnackbar(message, {
+      variant,
+      autoHideDuration,
+      anchorOrigin: { vertical: "bottom", horizontal: "right" },
+    });
+  };
+
+  const handleSendCommand = async (command: string) => {
+    const res = await sendCommand(command);
+    showResponse(res, showSnackbar);
+  };
+
   return (
     <div>
+      <div>
+        <button onClick={() => handleSendCommand("start")}>Start</button>
+        <button onClick={() => handleSendCommand("stop")}>Stop</button>
+        <button onClick={() => handleSendCommand("turn-off")}>Turn off</button>
+        <button onClick={() => handleSendCommand("turn-on")}>Turn on</button>
+        <button onClick={() => handleSendCommand("error")}>Error</button>
+      </div>
       {/* Elevation and Velocity */}
       <p>Elevation: {data?.elevation || "N/A"}</p>
       <p>Velocity: {data?.velocity || "N/A"}</p>
