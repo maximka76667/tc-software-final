@@ -9,10 +9,11 @@ import { showResponse } from "../lib/notifications";
 
 interface ControlProps {
   data: Telemetry | null;
-  error: string | null;
+  error: boolean;
+  reconnect: () => void;
 }
 
-const Control = ({ data, error }: ControlProps) => {
+const Control = ({ data, error, reconnect }: ControlProps) => {
   const { elevation, velocity, current, voltage } = useTelemetryStore();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -54,7 +55,12 @@ const Control = ({ data, error }: ControlProps) => {
       <p>Elevation: {data?.elevation || "N/A"}</p>
       <p>Velocity: {data?.velocity || "N/A"}</p>
 
-      <p>{error}</p>
+      {error && (
+        <div>
+          <p>Connection lost. Try to reconnect</p>
+          <button onClick={() => reconnect()}>Retry</button>
+        </div>
+      )}
       <LineChart
         xAxis={[{ data: arrayUntil(10) }]}
         series={[

@@ -92,7 +92,7 @@ app.post("/api/command", (req, res, next) => {
 
   // Here you could add logic to adjust the vehicle's state or trigger actions.
   // For now, we simply acknowledge the command.
-  return res.status(200).json({ message: command });
+  return res.status(200).json({ message: `Success - ${command} ` });
 });
 
 app.use(errorHandler);

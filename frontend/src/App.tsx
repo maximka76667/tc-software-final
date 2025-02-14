@@ -14,7 +14,7 @@ const Control = lazy(() => import("./pages/Control"));
 const Packet = lazy(() => import("./pages/Packet"));
 
 function App() {
-  const { data, error } = useData<Telemetry>(
+  const { data, error, reconnect } = useData<Telemetry>(
     "http://localhost:3001/api/stream"
   );
 
@@ -37,7 +37,9 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route
             path="/control"
-            element={<Control data={data} error={error} />}
+            element={
+              <Control data={data} error={error} reconnect={reconnect} />
+            }
           />
           <Route path="/packet" element={<Packet />} />
         </Routes>
