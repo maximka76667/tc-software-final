@@ -1,11 +1,11 @@
 import { VariantType } from "notistack";
 
-const statusHandlers: Record<number, { type: VariantType; duration: number }> =
+const statusHandlers: Record<number, { type: VariantType; duration?: number }> =
   {
-    200: { type: "success", duration: 1000 },
-    201: { type: "info", duration: 1000 },
-    300: { type: "warning", duration: 5000 },
-    500: { type: "error", duration: 5000 },
+    200: { type: "success", duration: 1500 },
+    201: { type: "info", duration: 1500 },
+    300: { type: "warning" },
+    500: { type: "error" },
   };
 
 const showResponse = async (
@@ -13,7 +13,7 @@ const showResponse = async (
   showSnackbar?: (
     message: string,
     variant: VariantType,
-    autoHideDuration: number
+    autoHideDuration?: number
   ) => void
 ) => {
   const data = await res.json();

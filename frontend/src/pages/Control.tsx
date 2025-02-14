@@ -19,11 +19,19 @@ const Control = ({ data, error }: ControlProps) => {
   const showSnackbar = (
     message: string,
     variant: VariantType,
-    autoHideDuration: number
+    autoHideDuration?: number
   ) => {
+    if (autoHideDuration) {
+      return enqueueSnackbar(message, {
+        variant,
+        autoHideDuration,
+        anchorOrigin: { vertical: "bottom", horizontal: "right" },
+      });
+    }
+
     enqueueSnackbar(message, {
       variant,
-      autoHideDuration,
+      persist: true,
       anchorOrigin: { vertical: "bottom", horizontal: "right" },
     });
   };
