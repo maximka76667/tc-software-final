@@ -16,6 +16,7 @@ const sendCommand = async (command: string) => {
     });
 
     return res;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (_: unknown) {
     return new Response(JSON.stringify({ error: "Failed to send command" }), {
       status: 500,
