@@ -1,10 +1,11 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useTelemetryStore } from "../store";
-import { useSnackbar } from "notistack";
+import { closeSnackbar, useSnackbar } from "notistack";
 
 function useData<T>(url: string) {
   const [data, setData] = useState<T | null>(null);
   const [error, setError] = useState<boolean>(false);
+
   const eventSourceRef = useRef<EventSource | null>(null);
   const { addElevation, addVelocity, addCurrent, addVoltage } =
     useTelemetryStore();
@@ -18,10 +19,9 @@ function useData<T>(url: string) {
     setError(false);
     eventSourceRef.current = new EventSource(url);
 
-    enqueueSnackbar("Connecting...", {
-      preventDuplicate: true,
+    const connectingSnackbarKey = enqueueSnackbar("Connecting...", {
       variant: "info",
-      autoHideDuration: 2000,
+      persist: true,
       anchorOrigin: { vertical: "bottom", horizontal: "right" },
     });
 
@@ -40,11 +40,12 @@ function useData<T>(url: string) {
       enqueueSnackbar("Error on connection!", {
         preventDuplicate: true,
         variant: "error",
-        autoHideDuration: 3000,
+        persist: true,
         anchorOrigin: { vertical: "bottom", horizontal: "right" },
       });
       eventSourceRef.current?.close();
       eventSourceRef.current = null;
+      closeSnackbar(connectingSnackbarKey);
     };
 
     eventSourceRef.current.onopen = () => {
@@ -54,6 +55,7 @@ function useData<T>(url: string) {
         autoHideDuration: 3000,
         anchorOrigin: { vertical: "bottom", horizontal: "right" },
       });
+      closeSnackbar(connectingSnackbarKey);
     };
   }, [addCurrent, addElevation, addVelocity, addVoltage, url]);
 
@@ -62,6 +64,7 @@ function useData<T>(url: string) {
 
     return () => {
       eventSourceRef.current?.close();
+      closeSnackbar();
     };
   }, []);
 
