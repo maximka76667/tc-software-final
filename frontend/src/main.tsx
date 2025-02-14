@@ -2,11 +2,22 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.tsx";
-import { SnackbarProvider } from "notistack";
+import { closeSnackbar, SnackbarProvider } from "notistack";
+import { IoMdClose } from "react-icons/io";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <SnackbarProvider maxSnack={10}>
+    <SnackbarProvider
+      action={(snackbarId) => (
+        <button
+          style={{ backgroundColor: "transparent" }}
+          onClick={() => closeSnackbar(snackbarId)}
+        >
+          <IoMdClose />
+        </button>
+      )}
+      maxSnack={10}
+    >
       <App />
     </SnackbarProvider>
   </StrictMode>
