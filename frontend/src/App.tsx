@@ -6,7 +6,7 @@ import {
   Route,
   NavLink,
 } from "react-router-dom";
-import useData from "./hooks/useData";
+import useSSE from "./hooks/useSSE";
 import { Telemetry } from "./lib/definitions";
 
 const Home = lazy(() => import("./pages/Home"));
@@ -14,7 +14,7 @@ const Control = lazy(() => import("./pages/Control"));
 const Packet = lazy(() => import("./pages/Packet"));
 
 function App() {
-  const { data, error, reconnect } = useData<Telemetry>(
+  const { data, error, reconnect } = useSSE<Telemetry>(
     "http://localhost:3001/api/stream"
   );
 
