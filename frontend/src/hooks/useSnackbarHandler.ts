@@ -12,7 +12,7 @@ export function useSnackbarHandler() {
   const handleError = () => {
     enqueueSnackbar("Error on connection!", {
       variant: "error",
-      persist: true,
+      autoHideDuration: 10000,
       anchorOrigin: { vertical: "bottom", horizontal: "right" },
     });
     closeSnackbar(connectingSnackbarKey);
@@ -32,7 +32,7 @@ export function useSnackbarHandler() {
   const handleStart = () => {
     const key = enqueueSnackbar("Connecting...", {
       variant: "info",
-      persist: true,
+      autoHideDuration: 10000,
       anchorOrigin: { vertical: "bottom", horizontal: "right" },
     });
     setConnectingSnackbarKey(key);
