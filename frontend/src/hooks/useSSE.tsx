@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import { useTelemetryStore } from "../store";
 import { closeSnackbar, useSnackbar } from "notistack";
 
-function useData<T>(url: string) {
+function useSSE<T>(url: string) {
   const [data, setData] = useState<T | null>(null);
   const [error, setError] = useState<boolean>(false);
 
@@ -71,4 +71,4 @@ function useData<T>(url: string) {
   return { data, error, reconnect: connect };
 }
 
-export default useData;
+export default useSSE;
