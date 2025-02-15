@@ -6,17 +6,37 @@ import {
   Route,
   NavLink,
 } from "react-router-dom";
-import useSSE from "./hooks/useSSE";
+import useEventSource from "./hooks/useEventSource";
 import { Telemetry } from "./lib/definitions";
+import { useTelemetryStore } from "./store";
+import { useSnackbarHandler } from "./hooks/useSnackbarHandler";
 
 const Home = lazy(() => import("./pages/Home"));
 const Control = lazy(() => import("./pages/Control"));
 const Packet = lazy(() => import("./pages/Packet"));
 
 function App() {
-  const { data, error, reconnect } = useSSE<Telemetry>(
-    "http://localhost:3001/api/stream"
-  );
+  const { addElevation, addVelocity, addCurrent, addVoltage } =
+    useTelemetryStore();
+
+  const { handleClose, handleError, handleOpen, handleStart } =
+    useSnackbarHandler();
+
+  const handleMessage = (newData: Telemetry) => {
+    addVelocity(newData.velocity);
+    addVoltage(newData.voltage);
+    addCurrent(newData.current);
+    addElevation(newData.elevation);
+  };
+
+  const { data, error, reconnect } = useEventSource<Telemetry>({
+    url: "http://localhost:3001/api/stream",
+    onMessage: handleMessage,
+    onError: handleError,
+    onOpen: handleOpen,
+    onStart: handleStart,
+    onClose: handleClose,
+  });
 
   return (
     <Router>
