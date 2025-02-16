@@ -45,6 +45,7 @@ const Control = ({ data, isLoading, error, reconnect }: ControlProps) => {
 
   return (
     <div>
+      {/* Status block */}
       <p>
         Status:{" "}
         {error ? (
@@ -55,7 +56,16 @@ const Control = ({ data, isLoading, error, reconnect }: ControlProps) => {
           <span style={{ color: "green" }}>Online</span>
         )}
       </p>
-      <div>
+
+      {/* Reconnect block */}
+      {error && (
+        <div>
+          <p>Connection lost. Try to reconnect</p>
+          <button onClick={() => reconnect()}>Retry</button>
+        </div>
+      )}
+
+      <div style={{ marginTop: "2rem" }}>
         <button onClick={() => handleSendCommand("start")}>Start</button>
         <button onClick={() => handleSendCommand("stop")}>Stop</button>
         <button onClick={() => handleSendCommand("turn-off")}>Turn off</button>
@@ -66,12 +76,6 @@ const Control = ({ data, isLoading, error, reconnect }: ControlProps) => {
       <p>Elevation: {data?.elevation || "N/A"}</p>
       <p>Velocity: {data?.velocity || "N/A"}</p>
 
-      {error && (
-        <div>
-          <p>Connection lost. Try to reconnect</p>
-          <button onClick={() => reconnect()}>Retry</button>
-        </div>
-      )}
       <LineChart
         xAxis={[{ data: arrayUntil(10) }]}
         series={[
