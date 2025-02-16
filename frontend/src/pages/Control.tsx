@@ -45,17 +45,6 @@ const Control = ({ data, isLoading, error, reconnect }: ControlProps) => {
 
   return (
     <div>
-      <div>
-        <button onClick={() => handleSendCommand("start")}>Start</button>
-        <button onClick={() => handleSendCommand("stop")}>Stop</button>
-        <button onClick={() => handleSendCommand("turn-off")}>Turn off</button>
-        <button onClick={() => handleSendCommand("turn-on")}>Turn on</button>
-        <button onClick={() => handleSendCommand("error")}>Error</button>
-      </div>
-      {/* Elevation and Velocity */}
-      <p>Elevation: {data?.elevation || "N/A"}</p>
-      <p>Velocity: {data?.velocity || "N/A"}</p>
-
       <p>
         Status:{" "}
         {error ? (
@@ -66,6 +55,16 @@ const Control = ({ data, isLoading, error, reconnect }: ControlProps) => {
           <span style={{ color: "green" }}>Online</span>
         )}
       </p>
+      <div>
+        <button onClick={() => handleSendCommand("start")}>Start</button>
+        <button onClick={() => handleSendCommand("stop")}>Stop</button>
+        <button onClick={() => handleSendCommand("turn-off")}>Turn off</button>
+        <button onClick={() => handleSendCommand("turn-on")}>Turn on</button>
+        <button onClick={() => handleSendCommand("error")}>Error</button>
+      </div>
+      {/* Elevation and Velocity */}
+      <p>Elevation: {data?.elevation || "N/A"}</p>
+      <p>Velocity: {data?.velocity || "N/A"}</p>
 
       {error && (
         <div>
