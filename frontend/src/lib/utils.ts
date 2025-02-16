@@ -25,6 +25,7 @@ export async function sendRandomData() {
   }
 }
 
+// Function used for charts' X axis labels
 export const arrayUntil = (n: number) => {
   const res: number[] = [];
   for (let i = 0; i < n; i++) {
@@ -33,6 +34,7 @@ export const arrayUntil = (n: number) => {
   return res;
 };
 
+// Adds new element to an array and returns last n elements
 export const addAndGetLastNElements = <T>(
   array: T[],
   newValue: T,

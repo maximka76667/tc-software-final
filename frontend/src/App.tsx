@@ -29,7 +29,7 @@ function App() {
     addElevation(newData.elevation);
   };
 
-  const { data, error, reconnect } = useEventSource<Telemetry>({
+  const { data, error, isLoading, reconnect } = useEventSource<Telemetry>({
     url: "http://localhost:3001/api/stream",
     onMessage: handleMessage,
     onError: handleError,
@@ -58,7 +58,12 @@ function App() {
           <Route
             path="/control"
             element={
-              <Control data={data} error={error} reconnect={reconnect} />
+              <Control
+                data={data}
+                error={error}
+                isLoading={isLoading}
+                reconnect={reconnect}
+              />
             }
           />
           <Route path="/packet" element={<Packet />} />

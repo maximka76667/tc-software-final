@@ -19,6 +19,7 @@ function useEventSource<T>({
 }: useEventSourceProps<T>) {
   const [data, setData] = useState<T | null>(null);
   const [error, setError] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const eventSourceRef = useRef<EventSource | null>(null);
 
@@ -27,6 +28,7 @@ function useEventSource<T>({
       eventSourceRef.current.close();
     }
 
+    setIsLoading(true);
     setError(false);
     eventSourceRef.current = new EventSource(url);
 
@@ -41,12 +43,14 @@ function useEventSource<T>({
 
     eventSourceRef.current.onerror = () => {
       setError(true);
+      setIsLoading(false);
       onError();
       eventSourceRef.current?.close();
       eventSourceRef.current = null;
     };
 
     eventSourceRef.current.onopen = () => {
+      setIsLoading(false);
       onOpen();
     };
   }, [onError, onMessage, onOpen, onStart, url]);
@@ -60,7 +64,7 @@ function useEventSource<T>({
     };
   }, []);
 
-  return { data, error, reconnect: connect };
+  return { data, error, isLoading, reconnect: connect };
 }
 
 export default useEventSource;

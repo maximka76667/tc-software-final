@@ -10,10 +10,11 @@ import { showResponse } from "../lib/notifications";
 interface ControlProps {
   data: Telemetry | null;
   error: boolean;
+  isLoading: boolean;
   reconnect: () => void;
 }
 
-const Control = ({ data, error, reconnect }: ControlProps) => {
+const Control = ({ data, isLoading, error, reconnect }: ControlProps) => {
   const { elevation, velocity, current, voltage } = useTelemetryStore();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -54,6 +55,17 @@ const Control = ({ data, error, reconnect }: ControlProps) => {
       {/* Elevation and Velocity */}
       <p>Elevation: {data?.elevation || "N/A"}</p>
       <p>Velocity: {data?.velocity || "N/A"}</p>
+
+      <p>
+        Status:{" "}
+        {error ? (
+          <span style={{ color: "red" }}>Offline</span>
+        ) : isLoading ? (
+          <span style={{ color: "grey" }}>Connecting...</span>
+        ) : (
+          <span style={{ color: "green" }}>Online</span>
+        )}
+      </p>
 
       {error && (
         <div>
