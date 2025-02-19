@@ -6,19 +6,19 @@ import { closeSnackbar, SnackbarProvider } from "notistack";
 import { IoMdClose } from "react-icons/io";
 
 createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <SnackbarProvider
-      action={(snackbarId) => (
-        <button
-          style={{ backgroundColor: "transparent" }}
-          onClick={() => closeSnackbar(snackbarId)}
-        >
-          <IoMdClose />
-        </button>
-      )}
-      maxSnack={10}
-    >
-      <App />
-    </SnackbarProvider>
-  </StrictMode>
+  // <StrictMode>
+  <SnackbarProvider
+    action={(snackbarId) => (
+      <button
+        style={{ backgroundColor: "transparent" }}
+        onClick={() => closeSnackbar(snackbarId)}
+      >
+        <IoMdClose />
+      </button>
+    )}
+    maxSnack={10}
+  >
+    <App />
+  </SnackbarProvider>
+  // </StrictMode>
 );

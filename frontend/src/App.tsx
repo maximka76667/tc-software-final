@@ -6,36 +6,63 @@ import {
   Route,
   NavLink,
 } from "react-router-dom";
-import useEventSource from "./hooks/useEventSource";
 import { Telemetry } from "./lib/definitions";
 import { useTelemetryStore } from "./store";
 import { useSnackbarHandler } from "./hooks/useSnackbarHandler";
+import useWebSocket from "./hooks/useWebSocket";
 
 const Home = lazy(() => import("./pages/Home"));
 const Control = lazy(() => import("./pages/Control"));
 const Packet = lazy(() => import("./pages/Packet"));
 
 function App() {
-  const { addElevation, addVelocity, addCurrent, addVoltage } =
-    useTelemetryStore();
+  const {
+    addElevation,
+    addVelocity,
+    addCurrent,
+    addVoltage,
+    setIsSimulationRunning,
+  } = useTelemetryStore();
 
-  const { handleClose, handleError, handleOpen, handleStart } =
-    useSnackbarHandler();
+  const {
+    handleClose,
+    handleError,
+    handleConnectionError,
+    handleOpen,
+    handleStart,
+    showMessage,
+  } = useSnackbarHandler();
 
-  const handleMessage = (newData: Telemetry) => {
+  const handleTelemetryMessage = (newData: Telemetry) => {
     addVelocity(newData.velocity);
     addVoltage(newData.voltage);
     addCurrent(newData.current);
     addElevation(newData.elevation);
   };
 
-  const { data, error, isLoading, reconnect } = useEventSource<Telemetry>({
-    url: "http://localhost:3001/api/stream",
-    onMessage: handleMessage,
+  const handleSimulationChange = (isSimulationRunning: boolean) => {
+    setIsSimulationRunning(isSimulationRunning);
+  };
+
+  // const { data, error, isLoading, reconnect } = useEventSource<Telemetry>({
+  //   url: "http://localhost:3001/api/stream",
+  //   onMessage: handleMessage,
+  //   onError: handleError,
+  //   onOpen: handleOpen,
+  //   onStart: handleStart,
+  //   onClose: handleClose,
+  // });
+
+  const { data, error, isLoading, reconnect, sendCommand } = useWebSocket({
+    url: "ws://localhost:6789",
+    onTelemetryMessage: handleTelemetryMessage,
+    onMessage: showMessage,
+    onConnectionError: handleConnectionError,
     onError: handleError,
     onOpen: handleOpen,
     onStart: handleStart,
     onClose: handleClose,
+    onSimulationChange: handleSimulationChange,
   });
 
   return (
@@ -63,6 +90,7 @@ function App() {
                 error={error}
                 isLoading={isLoading}
                 reconnect={reconnect}
+                sendCommand={sendCommand}
               />
             }
           />

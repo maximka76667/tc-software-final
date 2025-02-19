@@ -17,11 +17,15 @@ type TelemetryState = {
   voltage: (number | null)[];
   current: (number | null)[];
   elevation: (number | null)[];
+
   addVelocity: (value: number | null) => void;
   addVoltage: (value: number | null) => void;
   addCurrent: (value: number | null) => void;
   addElevation: (value: number | null) => void;
   resetData: () => void;
+
+  isSimulationRunning: boolean;
+  setIsSimulationRunning: (value: boolean) => void;
 };
 
 // Create the store
@@ -48,4 +52,6 @@ export const useTelemetryStore = create<TelemetryState>((set) => ({
     })),
   resetData: () =>
     set({ velocity: [], voltage: [], current: [], elevation: [] }),
+  isSimulationRunning: false,
+  setIsSimulationRunning: (value) => set({ isSimulationRunning: value }),
 }));

@@ -4,18 +4,24 @@ import { arrayUntil } from "../lib/utils";
 import { Telemetry } from "../lib/definitions";
 import { useTelemetryStore } from "../store";
 import { useSnackbar, VariantType } from "notistack";
-import { sendCommand } from "../lib/api";
-import { showResponse } from "../lib/notifications";
 
 interface ControlProps {
   data: Telemetry | null;
   error: boolean;
   isLoading: boolean;
   reconnect: () => void;
+  sendCommand: (message: string) => void;
 }
 
-const Control = ({ data, isLoading, error, reconnect }: ControlProps) => {
-  const { elevation, velocity, current, voltage } = useTelemetryStore();
+const Control = ({
+  data,
+  isLoading,
+  error,
+  reconnect,
+  sendCommand,
+}: ControlProps) => {
+  const { elevation, velocity, current, voltage, isSimulationRunning } =
+    useTelemetryStore();
   const { enqueueSnackbar } = useSnackbar();
 
   const showSnackbar = (
@@ -38,10 +44,10 @@ const Control = ({ data, isLoading, error, reconnect }: ControlProps) => {
     });
   };
 
-  const handleSendCommand = async (command: string) => {
-    const res = await sendCommand(command);
-    showResponse(res, showSnackbar);
-  };
+  // const handleSendCommand = async (command: string) => {
+  //   const res = await sendCommand(command);
+  //   showResponse(res, showSnackbar);
+  // };
 
   return (
     <div>
@@ -66,11 +72,14 @@ const Control = ({ data, isLoading, error, reconnect }: ControlProps) => {
       )}
 
       <div style={{ marginTop: "2rem" }}>
-        <button onClick={() => handleSendCommand("start")}>Start</button>
-        <button onClick={() => handleSendCommand("stop")}>Stop</button>
-        <button onClick={() => handleSendCommand("turn-off")}>Turn off</button>
-        <button onClick={() => handleSendCommand("turn-on")}>Turn on</button>
-        <button onClick={() => handleSendCommand("error")}>Error</button>
+        {isSimulationRunning ? (
+          <button onClick={() => sendCommand("stop")}>Stop</button>
+        ) : (
+          <button onClick={() => sendCommand("start")}>Start</button>
+        )}
+        <button onClick={() => sendCommand("turn-off")}>Turn off</button>
+        <button onClick={() => sendCommand("turn-on")}>Turn on</button>
+        <button onClick={() => sendCommand("error")}>Error</button>
       </div>
       {/* Elevation and Velocity */}
       <p>Elevation: {data?.elevation || "N/A"}</p>
