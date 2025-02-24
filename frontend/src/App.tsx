@@ -44,15 +44,6 @@ function App() {
     setIsSimulationRunning(isSimulationRunning);
   };
 
-  // const { data, error, isLoading, reconnect } = useEventSource<Telemetry>({
-  //   url: "http://localhost:3001/api/stream",
-  //   onMessage: handleMessage,
-  //   onError: handleError,
-  //   onOpen: handleOpen,
-  //   onStart: handleStart,
-  //   onClose: handleClose,
-  // });
-
   const { data, error, isLoading, reconnect, sendCommand } = useWebSocket({
     url: "ws://localhost:6789",
     onTelemetryMessage: handleTelemetryMessage,

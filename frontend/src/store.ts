@@ -28,7 +28,11 @@ type TelemetryState = {
   setIsSimulationRunning: (value: boolean) => void;
 };
 
-// Create the store
+// Create the store for telemetry
+// Velocity, voltage, current and elevation are arrays of last n values of this parameter
+// send through WebSocket
+// add functions add new value and limit array by some maximum value
+// isSimulationRunning responds for server's active state of sending packets with telemetry
 export const useTelemetryStore = create<TelemetryState>((set) => ({
   velocity: [],
   voltage: [],

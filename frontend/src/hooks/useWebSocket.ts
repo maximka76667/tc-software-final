@@ -55,6 +55,8 @@ function useWebSocket<T>({
         onTelemetryMessage(newData);
       } else if (type === "simulation") {
         onSimulationChange(newData.isSimulationRunning);
+        const { statusCode, message } = newData;
+        onMessage(statusCode, message);
       } else {
         const { statusCode, message } = newData;
         onMessage(statusCode, message);
@@ -74,7 +76,23 @@ function useWebSocket<T>({
       setIsLoading(false);
       onOpen();
     };
-  }, [onError, onMessage, onOpen, onStart, url]);
+
+    webSocketRef.current.onclose = () => {
+      setError(true);
+      setIsLoading(false);
+      onClose();
+    };
+  }, [
+    onClose,
+    onConnectionError,
+    onError,
+    onMessage,
+    onOpen,
+    onSimulationChange,
+    onStart,
+    onTelemetryMessage,
+    url,
+  ]);
 
   const sendCommand = (command: string) => {
     webSocketRef.current?.send(JSON.stringify({ command }));
@@ -89,6 +107,8 @@ function useWebSocket<T>({
         onClose();
       }
     };
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return { data, error, isLoading, reconnect: connect, sendCommand };

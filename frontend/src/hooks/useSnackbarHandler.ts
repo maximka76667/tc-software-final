@@ -67,6 +67,11 @@ export function useSnackbarHandler() {
 
   const handleClose = () => {
     closeSnackbar();
+    enqueueSnackbar("Connection is closed!", {
+      variant: "error",
+      autoHideDuration: 3000,
+      anchorOrigin: { vertical: "bottom", horizontal: "right" },
+    });
   };
 
   return {

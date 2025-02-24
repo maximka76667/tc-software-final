@@ -3,7 +3,6 @@ import { LineChart } from "@mui/x-charts";
 import { arrayUntil } from "../lib/utils";
 import { Telemetry } from "../lib/definitions";
 import { useTelemetryStore } from "../store";
-import { useSnackbar, VariantType } from "notistack";
 
 interface ControlProps {
   data: Telemetry | null;
@@ -22,32 +21,6 @@ const Control = ({
 }: ControlProps) => {
   const { elevation, velocity, current, voltage, isSimulationRunning } =
     useTelemetryStore();
-  const { enqueueSnackbar } = useSnackbar();
-
-  const showSnackbar = (
-    message: string,
-    variant: VariantType,
-    autoHideDuration?: number
-  ) => {
-    if (autoHideDuration) {
-      return enqueueSnackbar(message, {
-        variant,
-        autoHideDuration,
-        anchorOrigin: { vertical: "bottom", horizontal: "right" },
-      });
-    }
-
-    enqueueSnackbar(message, {
-      variant,
-      persist: true,
-      anchorOrigin: { vertical: "bottom", horizontal: "right" },
-    });
-  };
-
-  // const handleSendCommand = async (command: string) => {
-  //   const res = await sendCommand(command);
-  //   showResponse(res, showSnackbar);
-  // };
 
   return (
     <div>
@@ -77,6 +50,12 @@ const Control = ({
         ) : (
           <button onClick={() => sendCommand("start")}>Start</button>
         )}
+        <button
+          style={{ backgroundColor: "#d20", color: "#fff" }}
+          onClick={() => sendCommand("stop")}
+        >
+          Emergency Stop
+        </button>
         <button onClick={() => sendCommand("turn-off")}>Turn off</button>
         <button onClick={() => sendCommand("turn-on")}>Turn on</button>
         <button onClick={() => sendCommand("error")}>Error</button>
