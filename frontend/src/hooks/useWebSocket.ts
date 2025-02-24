@@ -1,12 +1,11 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 
-interface useWebSocketProps<T> {
+interface useWebSocketProps {
   url: string;
   onMessage: (statusCode: number, message: string) => void;
-  onTelemetryMessage: (data: T) => void;
-  onError: (message: string) => void;
+  // onTelemetryMessage: (data: T) => void;
+  // onError: (message: string) => void;
   onConnectionError: () => void;
-  onSimulationChange: (isSimulationRunning: boolean) => void;
   onOpen: () => void;
   onStart: () => void;
   onClose: () => void;
@@ -15,14 +14,13 @@ interface useWebSocketProps<T> {
 function useWebSocket<T>({
   url,
   onMessage,
-  onTelemetryMessage,
+  // onTelemetryMessage,
   onConnectionError,
-  onError,
+  // onError,
   onOpen,
   onStart,
   onClose,
-  onSimulationChange,
-}: useWebSocketProps<T>) {
+}: useWebSocketProps) {
   const [data, setData] = useState<T | null>(null);
   const [error, setError] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -41,26 +39,40 @@ function useWebSocket<T>({
     onStart();
 
     webSocketRef.current.onmessage = (event) => {
-      const newData = JSON.parse(event.data);
+      const packet = JSON.parse(event.data);
 
-      const { ok, type } = newData;
+      const { id, data } = packet;
 
-      if (!ok) {
-        onError(newData.error);
-        return;
+      // if (!ok) {
+      //   onError(newData.error);
+      //   return;
+      // }
+
+      // if (type === "telemetry") {
+      //   setData(newData);
+      //   onTelemetryMessage(newData);
+      // } else if (type === "simulation") {
+      //   onSimulationChange(newData.isSimulationRunning);
+      //   const { statusCode, message } = newData;
+      //   onMessage(statusCode, message);
+      // } else {
+      //   const { statusCode, message } = newData;
+      //   onMessage(statusCode, message);
+      // }
+      // setError(false);
+
+      if (id === "data") {
+        setData(data);
+        // onTelemetryMessage(data);
+      } else if (id === "info") {
+        const { severity } = data;
+        onMessage(201, severity);
       }
-
-      if (type === "telemetry") {
-        setData(newData);
-        onTelemetryMessage(newData);
-      } else if (type === "simulation") {
-        onSimulationChange(newData.isSimulationRunning);
-        const { statusCode, message } = newData;
-        onMessage(statusCode, message);
-      } else {
-        const { statusCode, message } = newData;
-        onMessage(statusCode, message);
-      }
+      // else if (type === "simulation") {
+      //   onSimulationChange(newData.isSimulationRunning);
+      //   const { statusCode, message } = newData;
+      //   onMessage(statusCode, message);
+      // }
       setError(false);
     };
 
@@ -82,20 +94,10 @@ function useWebSocket<T>({
       setIsLoading(false);
       onClose();
     };
-  }, [
-    onClose,
-    onConnectionError,
-    onError,
-    onMessage,
-    onOpen,
-    onSimulationChange,
-    onStart,
-    onTelemetryMessage,
-    url,
-  ]);
+  }, [onClose, onConnectionError, onMessage, onOpen, onStart, url]);
 
   const sendCommand = (command: string) => {
-    webSocketRef.current?.send(JSON.stringify({ command }));
+    webSocketRef.current?.send(JSON.stringify({ id: command }));
   };
 
   useEffect(() => {

@@ -8,4 +8,6 @@ const statusHandlers: Record<number, { type: VariantType; duration?: number }> =
     500: { type: "error" },
   };
 
-export { statusHandlers };
+const NUMBER_GRAPHICS_ELEMENTS = 10;
+
+export { statusHandlers, NUMBER_GRAPHICS_ELEMENTS };
