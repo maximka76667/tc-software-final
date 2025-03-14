@@ -48,12 +48,25 @@ button {
   background-color: #f5f5f5;
 }
 
+button:disabled {
+  background-color: #eee;
+  color: #555;
+  opacity: 0.6;
+}
+
 button:hover {
   border-color: #646cff;
 }
 
 button:focus,
 button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+button:disabled:hover,
+button:disabled:focus,
+button:disabled:focus-visible {
+  border: 1px solid transparent;
   outline: 4px auto -webkit-focus-ring-color;
 }
 

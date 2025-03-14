@@ -10,9 +10,15 @@ interface ChartWrapper {
 }
 
 const ChartWrapper = ({ metric, data }: ChartWrapper) => {
-  const [lastData, setLastData] = useState<number[]>([]);
+  const [lastData, setLastData] = useState<number[]>(
+    new Array(NUMBER_GRAPHICS_ELEMENTS).fill(0)
+  );
 
   useEffect(() => {
+    if (!data) {
+      return;
+    }
+
     setLastData((prevData) =>
       addAndGetLastNElements(
         prevData,
@@ -28,13 +34,11 @@ const ChartWrapper = ({ metric, data }: ChartWrapper) => {
   return (
     <LineChart
       xAxis={[{ data: arrayUntil(NUMBER_GRAPHICS_ELEMENTS) }]}
+      // Dash styled line for average value
       sx={{
         "& .MuiLineElement-series-auto-generated-id-1": {
           strokeDasharray: "10 5",
           strokeWidth: 4,
-        },
-        "& .MuiAreaElement-series-Germany": {
-          fill: "url('#myGradient')",
         },
       }}
       series={[
@@ -47,10 +51,11 @@ const ChartWrapper = ({ metric, data }: ChartWrapper) => {
         {
           data: new Array(NUMBER_GRAPHICS_ELEMENTS).fill(avg),
           label: "Average",
+          color: "#515151",
         },
       ]}
-      width={700}
-      height={300}
+      width={850}
+      height={175}
     />
   );
 };

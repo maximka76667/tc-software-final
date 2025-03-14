@@ -34,6 +34,7 @@ export function useSnackbarHandler() {
     showSnackbar(errorMessage, {
       variant: "error",
       autoHideDuration: 10000,
+      preventDuplicate: true,
     });
   };
 

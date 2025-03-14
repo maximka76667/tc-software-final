@@ -43,3 +43,12 @@ export const addAndGetLastNElements = <T>(
   const newValues = [...array, newValue].slice(-n);
   return newValues;
 };
+
+// Returns string with uppercase first letter
+export function capitalize(str: string) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+export function capitalizeWords(str: string) {
+  return str.replace(/\b\w/g, (char) => char.toUpperCase());
+}

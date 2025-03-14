@@ -9,6 +9,7 @@ import {
 import { useSnackbarHandler } from "./hooks/useSnackbarHandler";
 import useWebSocket from "./hooks/useWebSocket";
 import { Telemetry } from "./lib/definitions";
+import Viewer from "./pages/Viewer";
 
 const Home = lazy(() => import("./pages/Home"));
 const Control = lazy(() => import("./pages/Control"));
@@ -16,7 +17,7 @@ const Control = lazy(() => import("./pages/Control"));
 function App() {
   const {
     handleClose,
-    // handleError,
+    handleError,
     handleConnectionError,
     handleOpen,
     handleStart,
@@ -29,7 +30,7 @@ function App() {
       // onTelemetryMessage: handleTelemetryMessage,
       onMessage: showMessage,
       onConnectionError: handleConnectionError,
-      // onError: handleError,
+      onError: handleError,
       onOpen: handleOpen,
       onStart: handleStart,
       onClose: handleClose,
@@ -43,6 +44,9 @@ function App() {
         </li>
         <li>
           <NavLink to={"/control"}>Control</NavLink>
+        </li>
+        <li>
+          <NavLink to={"/viewer"}>Viewer</NavLink>
         </li>
       </nav>
       <Routes>
@@ -59,6 +63,7 @@ function App() {
             />
           }
         />
+        <Route path="/viewer" element={<Viewer />} />
       </Routes>
     </Router>
   );

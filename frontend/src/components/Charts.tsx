@@ -1,111 +1,70 @@
-// import { LineChart } from "@mui/x-charts";
-// import React from "react";
-// import { arrayUntil } from "../lib/utils";
-// import { useTelemetryStore } from "../store";
+import { Fragment, memo, useState } from "react";
+import ChartWrapper from "./ChartWrapper";
 
-// interface ChartsProps {
-//   isVelocityGraphicsActive: boolean;
-//   isCurrentGraphicsActive: boolean;
-//   isElevationGraphicsActive: boolean;
-//   isVoltageGraphicsActive: boolean;
-// }
+interface ChartsBoxProps {
+  data: { [key: string]: number };
+}
 
-// const Charts = ({
-//   isVelocityGraphicsActive,
-//   isCurrentGraphicsActive,
-//   isElevationGraphicsActive,
-//   isVoltageGraphicsActive,
-// }: ChartsProps) => {
-//   const { elevation, velocity, current, voltage } = useTelemetryStore();
+const telemetryMetrics = [
+  { label: "Elevation", color: "#4CAF50" },
+  { label: "Velocity", color: "#F44336" },
+  { label: "Voltage", color: "#FF9800" },
+  { label: "Current", color: "#2196F3" },
+];
 
-//   return (
-//     <div>
-//       {isElevationGraphicsActive && (
-//         <LineChart
-//           xAxis={[{ data: arrayUntil(10) }]}
-//           series={[
-//             {
-//               data: elevation,
-//               area: true,
-//               label: "Elevation",
-//             },
-//           ]}
-//           width={700}
-//           height={300}
-//         />
-//       )}
-//       {isVelocityGraphicsActive && (
-//         <LineChart
-//           xAxis={[{ data: arrayUntil(10) }]}
-//           series={[
-//             {
-//               data: velocity,
-//               area: true,
-//               label: "Velocity",
-//             },
-//           ]}
-//           width={700}
-//           height={300}
-//         />
-//       )}
-//       {/* Voltage */}
-//       {isVoltageGraphicsActive && (
-//         <LineChart
-//           xAxis={[{ data: arrayUntil(10) }]}
-//           yAxis={[
-//             {
-//               colorMap: {
-//                 type: "piecewise",
-//                 thresholds: [200, 300],
-//                 colors: ["#22BB22", "#ffd700", "#EC1F27"],
-//               },
-//             },
-//           ]}
-//           series={[
-//             {
-//               curve: "step",
-//               data: voltage,
-//               area: true,
-//               label: "Voltage",
-//               color: "grey",
-//             },
-//           ]}
-//           width={700}
-//           height={300}
-//         />
-//       )}
-//       {/* Current */}
-//       {isCurrentGraphicsActive && (
-//         <LineChart
-//           xAxis={[{ data: arrayUntil(10) }]}
-//           yAxis={[
-//             {
-//               colorMap: {
-//                 type: "piecewise",
-//                 thresholds: [50, 80],
-//                 colors: ["#22BB22", "#ffd700", "#EC1F27"],
-//               },
-//             },
-//           ]}
-//           series={[
-//             {
-//               curve: "step",
-//               data: current,
-//               label: "Current",
-//               color: "#cacaca",
-//             },
-//           ]}
-//           width={700}
-//           height={300}
-//           sx={{
-//             "& .MuiLineElement-root": {
-//               strokeWidth: 8,
-//             },
-//           }}
-//         />
-//       )}
-//     </div>
-//   );
-// };
+// Make all telemetrics active by default
+const activeChartsDefault = telemetryMetrics.map(
+  (telemetry) => telemetry.label
+);
 
-// export default Charts;
+const Charts = ({ data }: ChartsBoxProps) => {
+  const [activeCharts, setActiveCharts] =
+    useState<string[]>(activeChartsDefault);
+
+  const toggleChart = (metric: string) => {
+    setActiveCharts((prev) =>
+      prev.includes(metric)
+        ? prev.filter((m) => m !== metric)
+        : [...prev, metric]
+    );
+  };
+
+  return (
+    <>
+      <div className="flex gap-2 justify-center mb-8">
+        {telemetryMetrics.map((metric) => (
+          <button
+            key={metric.label}
+            onClick={() => toggleChart(metric.label)}
+            className={`flex items-center gap-3 px-4 py-2 border rounded ${
+              activeCharts.includes(metric.label) ? `` : "opacity-40"
+            }`}
+          >
+            <div
+              className="w-[10px] h-[10px] rounded-xl"
+              style={{ backgroundColor: metric.color }}
+            />
+            {metric.label}
+          </button>
+        ))}
+      </div>
+      <div className="flex flex-col">
+        {telemetryMetrics.map((metric) => (
+          <Fragment key={metric.label}>
+            {
+              <div
+                className={`${
+                  activeCharts.includes(metric.label) ? "flex" : "hidden"
+                }`}
+              >
+                <ChartWrapper data={data} metric={metric} />
+              </div>
+            }
+          </Fragment>
+        ))}
+      </div>
+    </>
+  );
+};
+
+export default memo(Charts);
