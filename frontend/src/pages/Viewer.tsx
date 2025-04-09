@@ -3,12 +3,17 @@ import { OrbitControls } from "@react-three/drei";
 import { useControls } from "leva";
 import GridHelpers from "../components/GridHelpers";
 import { GRID_SIZE } from "../lib/consts";
+import { mapRange } from "../lib/utils";
 
-const Viewer = () => {
+interface ViewerProps {
+  elevation: number;
+}
+
+const Viewer = ({ elevation }: ViewerProps) => {
   // Leva control options
-  const { positionY, rotationX, rotationY, rotationZ } = useControls({
+  const { rotationX, rotationY, rotationZ } = useControls({
     // Transport box position
-    positionY: { value: GRID_SIZE / 2, min: 2, max: GRID_SIZE - 2, step: 0.1 },
+    // positionY: { value: GRID_SIZE / 2, min: 2, max: GRID_SIZE - 2, step: 0.1 },
 
     // Transport box rotation
     // for X, Y and Z axis has to be set between -Math.PI / 2 and Math.PI / 2
@@ -17,6 +22,8 @@ const Viewer = () => {
     rotationY: { value: 0, min: -Math.PI / 2, max: Math.PI / 2, step: 0.05 },
     rotationZ: { value: 0, min: -Math.PI / 2, max: Math.PI / 2, step: 0.05 },
   });
+
+  const mappedElevation = mapRange(elevation, 0, 38, 2, GRID_SIZE);
 
   return (
     <div className="w-full h-[calc(100vh-64px)]">
@@ -29,16 +36,19 @@ const Viewer = () => {
         }}
       >
         {/* Lights */}
-        <ambientLight />
-        <pointLight intensity={100} position={[5, GRID_SIZE - 2, 5]} />
-        <pointLight intensity={100} position={[-5, 2, -5]} />
+        <ambientLight intensity={2} />
+        <spotLight
+          intensity={300}
+          angle={90}
+          position={[5, GRID_SIZE / 2, 5]}
+        />
 
         {/* Transport Box */}
         {/* Outer mesh used to initially rotate transport by -90 degrees */}
         {/* Note: changing default value and range for rotationY doesn't interact correctly with X and Z axises */}
         <mesh rotation={[0, -Math.PI / 2, 0]}>
           <mesh
-            position={[0, positionY, 0]}
+            position={[0, mappedElevation, 0]}
             rotation={[rotationX, rotationY, rotationZ]}
           >
             <boxGeometry args={[6, 2, 2]} />
@@ -51,8 +61,8 @@ const Viewer = () => {
           <cylinderGeometry args={[2, 2, 1]} />
           <meshStandardMaterial
             color="silver"
-            metalness={0.8}
-            roughness={0.3}
+            metalness={0.9}
+            roughness={0.5}
           />
         </mesh>
 
@@ -60,8 +70,8 @@ const Viewer = () => {
           <cylinderGeometry args={[2, 2, 1]} />
           <meshStandardMaterial
             color="silver"
-            metalness={0.8}
-            roughness={0.3}
+            metalness={0.9}
+            roughness={0.5}
           />
         </mesh>
 

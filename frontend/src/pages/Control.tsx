@@ -2,6 +2,7 @@ import { memo } from "react";
 import { Telemetry } from "../lib/definitions";
 import Charts from "../components/Charts";
 import { capitalizeWords } from "../lib/utils";
+import { commands } from "../lib/consts";
 
 interface ControlProps {
   data: Telemetry | null;
@@ -11,15 +12,6 @@ interface ControlProps {
   sendCommand: (message: string) => void;
 }
 
-const commands = [
-  "precharge",
-  "discharge",
-  "start levitation",
-  "stop levitation",
-  "start motor",
-  "stop motor",
-];
-
 const Control = ({
   data,
   isLoading,
@@ -27,7 +19,6 @@ const Control = ({
   // reconnect,
   sendCommand,
 }: ControlProps) => {
-  console.log(error);
   return (
     <div className="flex w-full">
       <div className="w-3/5">

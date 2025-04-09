@@ -5,14 +5,11 @@ import { NUMBER_GRAPHICS_ELEMENTS } from "../lib/consts";
 
 interface ChartWrapper {
   metric: { label: string; color: string };
-  // metricData: number;
   data: { [key: string]: number };
 }
 
 const ChartWrapper = ({ metric, data }: ChartWrapper) => {
-  const [lastData, setLastData] = useState<number[]>(
-    new Array(NUMBER_GRAPHICS_ELEMENTS).fill(0)
-  );
+  const [lastData, setLastData] = useState<number[]>([]);
 
   useEffect(() => {
     if (!data) {
@@ -26,6 +23,7 @@ const ChartWrapper = ({ metric, data }: ChartWrapper) => {
         NUMBER_GRAPHICS_ELEMENTS
       )
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
   const sum = lastData.reduce((prev, value) => prev + value, 0);

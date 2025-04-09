@@ -52,3 +52,13 @@ export function capitalize(str: string) {
 export function capitalizeWords(str: string) {
   return str.replace(/\b\w/g, (char) => char.toUpperCase());
 }
+
+export const mapRange = (
+  value: number,
+  min1: number,
+  max1: number,
+  min2: number,
+  max2: number
+): number => {
+  return ((value - min1) * (max2 - min2)) / (max1 - min1) + min2;
+};

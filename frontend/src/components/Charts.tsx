@@ -1,16 +1,10 @@
 import { Fragment, memo, useState } from "react";
 import ChartWrapper from "./ChartWrapper";
+import { telemetryMetrics } from "../lib/consts";
 
 interface ChartsBoxProps {
   data: { [key: string]: number };
 }
-
-const telemetryMetrics = [
-  { label: "Elevation", color: "#4CAF50" },
-  { label: "Velocity", color: "#F44336" },
-  { label: "Voltage", color: "#FF9800" },
-  { label: "Current", color: "#2196F3" },
-];
 
 // Make all telemetrics active by default
 const activeChartsDefault = telemetryMetrics.map(
@@ -51,15 +45,13 @@ const Charts = ({ data }: ChartsBoxProps) => {
       <div className="flex flex-col">
         {telemetryMetrics.map((metric) => (
           <Fragment key={metric.label}>
-            {
-              <div
-                className={`${
-                  activeCharts.includes(metric.label) ? "flex" : "hidden"
-                }`}
-              >
-                <ChartWrapper data={data} metric={metric} />
-              </div>
-            }
+            <div
+              className={`${
+                activeCharts.includes(metric.label) ? "flex" : "hidden"
+              }`}
+            >
+              <ChartWrapper data={data} metric={metric} />
+            </div>
           </Fragment>
         ))}
       </div>

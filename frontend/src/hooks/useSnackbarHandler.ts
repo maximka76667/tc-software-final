@@ -1,4 +1,3 @@
-// components/SnackbarHandler.tsx
 import {
   closeSnackbar,
   enqueueSnackbar,

@@ -20,3 +20,21 @@ export const FAULT_INTERVAL = 1000;
 
 // Viewer consts
 export const GRID_SIZE = 12;
+
+// Control panel commands
+export const commands = [
+  "precharge",
+  "discharge",
+  "start levitation",
+  "stop levitation",
+  // "start motor",
+  // "stop motor",
+];
+
+// Control panel charts
+export const telemetryMetrics = [
+  { label: "Elevation", color: "#4CAF50" },
+  // { label: "Velocity", color: "#F44336" },
+  { label: "Voltage", color: "#FF9800" },
+  { label: "Current", color: "#2196F3" },
+];

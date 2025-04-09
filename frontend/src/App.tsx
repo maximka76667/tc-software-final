@@ -10,9 +10,11 @@ import { useSnackbarHandler } from "./hooks/useSnackbarHandler";
 import useWebSocket from "./hooks/useWebSocket";
 import { Telemetry } from "./lib/definitions";
 import Viewer from "./pages/Viewer";
+import useKeepAlive from "./hooks/useKeepAlive";
+import Control from "./pages/Control";
 
 const Home = lazy(() => import("./pages/Home"));
-const Control = lazy(() => import("./pages/Control"));
+// const Control = lazy(() => import("./pages/Control"));
 
 function App() {
   const {
@@ -24,7 +26,7 @@ function App() {
     showMessage,
   } = useSnackbarHandler();
 
-  const { data, error, isLoading, reconnect, sendCommand } =
+  const { data, error, isLoading, reconnect, sendCommand, isFaultConfirmed } =
     useWebSocket<Telemetry>({
       url: "ws://localhost:6789",
       // onTelemetryMessage: handleTelemetryMessage,
@@ -35,6 +37,8 @@ function App() {
       onStart: handleStart,
       onClose: handleClose,
     });
+
+  useKeepAlive({ sendCommand, isFaultConfirmed });
 
   return (
     <Router>
@@ -63,7 +67,10 @@ function App() {
             />
           }
         />
-        <Route path="/viewer" element={<Viewer />} />
+        <Route
+          path="/viewer"
+          element={<Viewer elevation={data?.elevation || 0} />}
+        />
       </Routes>
     </Router>
   );
