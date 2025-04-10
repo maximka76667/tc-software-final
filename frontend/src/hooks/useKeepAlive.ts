@@ -11,6 +11,7 @@ const useKeepAlive = ({ sendCommand, isFaultConfirmed }: useKeepAliveProps) => {
   // Ping pong states
   const [isFault, setIsFault] = useState(false);
   const pongTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [isPingFailed, setIsPingFailed] = useState(false);
 
   // Starts sending fault command if timeout was exceeded
   const handlePongExceedsTimeout = (pingIntervalId: NodeJS.Timeout) => {
@@ -43,9 +44,13 @@ const useKeepAlive = ({ sendCommand, isFaultConfirmed }: useKeepAliveProps) => {
         }
       } else {
         console.log("Ping is false");
+        setIsFault(true);
+        setIsPingFailed(true);
       }
     } catch (e) {
       console.error("Ping failed:", e);
+      setIsFault(true);
+      setIsPingFailed(true);
     }
   };
 
@@ -72,13 +77,13 @@ const useKeepAlive = ({ sendCommand, isFaultConfirmed }: useKeepAliveProps) => {
         sendCommand("fault");
       }, FAULT_INTERVAL);
 
-      if (isFaultConfirmed) {
+      if (isFaultConfirmed || isPingFailed) {
         clearInterval(intervalId);
       }
     }
 
     return () => clearInterval(intervalId);
-  }, [isFault, isFaultConfirmed]);
+  }, [isFault, isFaultConfirmed, isPingFailed]);
 
   return { isFault };
 };

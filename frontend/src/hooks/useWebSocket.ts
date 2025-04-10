@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback, useRef } from "react";
 
 interface useWebSocketProps {
   url: string;
-  onMessage: (statusCode: number, message: string) => void;
+  onMessage: (message: string, severity?: number) => void;
   // onTelemetryMessage: (data: T) => void;
   onError: (message: string) => void;
   onConnectionError: () => void;
@@ -39,7 +39,6 @@ function useWebSocket<T>({
     }
 
     setIsLoading(true);
-    // setIsFault(false);
     setError(false);
     webSocketRef.current = new WebSocket(url);
 
@@ -53,9 +52,9 @@ function useWebSocket<T>({
       if (id === "data") {
         setData(data);
         // onTelemetryMessage(data);
-      } else if (id === "info") {
-        const { severity } = data;
-        onMessage(201, severity);
+      } else if (id === "message") {
+        const { message, severity = 5 } = data;
+        onMessage(message, severity);
       } else if (id === "fault confirmed") {
         setIsFaultConfirmed(true);
       }

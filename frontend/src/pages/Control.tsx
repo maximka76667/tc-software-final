@@ -1,8 +1,9 @@
-import { memo } from "react";
-import { Telemetry } from "../lib/definitions";
+import { memo, useEffect, useRef } from "react";
+import { Message, Telemetry } from "../lib/definitions";
 import Charts from "../components/Charts";
 import { capitalizeWords } from "../lib/utils";
 import { commands } from "../lib/consts";
+import "../components/MessagesBox.css";
 
 interface ControlProps {
   data: Telemetry | null;
@@ -10,15 +11,25 @@ interface ControlProps {
   isLoading: boolean;
   reconnect: () => void;
   sendCommand: (message: string) => void;
+  messages: Message[];
 }
 
 const Control = ({
   data,
   isLoading,
   error,
-  // reconnect,
+  reconnect,
   sendCommand,
+  messages,
 }: ControlProps) => {
+  const messageEndRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (messageEndRef.current) {
+      messageEndRef.current.scrollTop = messageEndRef.current.scrollHeight;
+    }
+  }, [messages]);
+
   return (
     <div className="flex w-full">
       <div className="w-3/5">
@@ -41,7 +52,7 @@ const Control = ({
         {error && (
           <div className="text-center m-2">
             <p>Connection lost. Try to reconnect</p>
-            {/* <button onClick={() => reconnect()}>Retry</button> */}
+            <button onClick={() => reconnect()}>Retry</button>
           </div>
         )}
 
@@ -55,48 +66,21 @@ const Control = ({
               {capitalizeWords(command)}
             </button>
           ))}
-          {/* <button
-            disabled={error}
-            className="w-1/3"
-            onClick={() => sendCommand("precharge")}
-          >
-            Precharge
-          </button>
-          <button
-            disabled={error}
-            className="w-1/3"
-            onClick={() => sendCommand("discharge")}
-          >
-            Discharge
-          </button>
-          <button
-            disabled={error}
-            className="w-1/3"
-            onClick={() => sendCommand("start levitation")}
-          >
-            Start Levitation
-          </button>
-          <button
-            disabled={error}
-            className="w-1/3"
-            onClick={() => sendCommand("stop levitation")}
-          >
-            Stop Levitation
-          </button>
-          <button
-            disabled={error}
-            className="w-1/3"
-            onClick={() => sendCommand("start motor")}
-          >
-            Start Motor
-          </button>
-          <button
-            disabled={error}
-            className="w-1/3"
-            onClick={() => sendCommand("stop motor")}
-          >
-            Stop Motor
-          </button> */}
+        </div>
+
+        <div
+          ref={messageEndRef}
+          className="message-box px-6 py-4 mt-20 rounded-3xl mx-8 h-[300px] overflow-y-scroll"
+        >
+          {messages.map(({ message, severity, time }) => (
+            <p className="m-1">
+              <span className="text-gray-500">{`[${time}]`}</span>
+              {" → "}
+              <span
+                className={`message-severity-${severity} `}
+              >{`${message}`}</span>
+            </p>
+          ))}
         </div>
       </div>
     </div>

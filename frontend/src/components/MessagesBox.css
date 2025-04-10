@@ -1,0 +1,48 @@
+.message-box {
+  background-color: #f5f5f5;
+}
+
+.message-severity-1 {
+  color: #4a4a4a; /* Dark Gray */
+  background: none;
+}
+
+.message-severity-2 {
+  color: #2a5d8f; /* Medium Blue */
+  background: none;
+}
+
+.message-severity-3 {
+  color: #00796b; /* Teal */
+  background: none;
+}
+
+.message-severity-4 {
+  color: #388e3c; /* Dark Green */
+  background: none;
+}
+
+.message-severity-5 {
+  background-color: #fff3cd; /* Light Yellow */
+  color: #856404;
+}
+
+.message-severity-6 {
+  background-color: #ffe0b2; /* Light Orange */
+  color: #8a5c00;
+}
+
+.message-severity-7 {
+  background-color: #ff9800; /* Bright Orange */
+  color: white;
+}
+
+.message-severity-8 {
+  background-color: #f44336; /* Red */
+  color: white;
+}
+
+.message-severity-9 {
+  background-color: #b71c1c; /* Deep Red */
+  color: white;
+}

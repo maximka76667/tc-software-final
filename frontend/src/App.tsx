@@ -1,4 +1,4 @@
-import { lazy } from "react";
+import { lazy, useState } from "react";
 import "./App.css";
 import {
   BrowserRouter as Router,
@@ -8,10 +8,11 @@ import {
 } from "react-router-dom";
 import { useSnackbarHandler } from "./hooks/useSnackbarHandler";
 import useWebSocket from "./hooks/useWebSocket";
-import { Telemetry } from "./lib/definitions";
+import { Message, Telemetry } from "./lib/definitions";
 import Viewer from "./pages/Viewer";
 import useKeepAlive from "./hooks/useKeepAlive";
 import Control from "./pages/Control";
+import { formatDateTime } from "./lib/utils";
 
 const Home = lazy(() => import("./pages/Home"));
 // const Control = lazy(() => import("./pages/Control"));
@@ -26,11 +27,26 @@ function App() {
     showMessage,
   } = useSnackbarHandler();
 
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      message: "Application ready",
+      severity: 1,
+      time: formatDateTime(new Date()),
+    },
+  ]);
+
+  const insertMessage = (message: string, severity = 5) => {
+    setMessages((messages) => [
+      ...messages,
+      { message, severity, time: formatDateTime(new Date()) },
+    ]);
+  };
+
   const { data, error, isLoading, reconnect, sendCommand, isFaultConfirmed } =
     useWebSocket<Telemetry>({
       url: "ws://localhost:6789",
       // onTelemetryMessage: handleTelemetryMessage,
-      onMessage: showMessage,
+      onMessage: insertMessage,
       onConnectionError: handleConnectionError,
       onError: handleError,
       onOpen: handleOpen,
@@ -64,6 +80,7 @@ function App() {
               isLoading={isLoading}
               reconnect={reconnect}
               sendCommand={sendCommand}
+              messages={messages}
             />
           }
         />

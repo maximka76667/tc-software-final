@@ -16,6 +16,9 @@ velocity = 0.0     # in km/h
 # Tick interval (seconds)
 TICK = 0.1
 
+# Commands
+commands = ["precharge", "discharge", "start levitation", "stop levitation"]
+
 # HTTP Server
 class PingHandler(BaseHTTPRequestHandler):
     def _set_headers(self):
@@ -56,6 +59,12 @@ async def websocket_handler(websocket, path):
     elevation = 0.0
     current = 0.0
 
+    async def send_message(severity, message):
+        await websocket.send(json.dumps({"id": "message", "data": {
+            "severity": severity,
+            "message": message
+        }}))  
+
     async def process_commands():
         """Attempt to receive a command with a timeout."""
         try:
@@ -79,6 +88,8 @@ async def websocket_handler(websocket, path):
                 elif cmd == "fault":
                     print("Fault!")
                     return "fault"
+                elif commands.__contains__(cmd):
+                    return "inappropriate state"
                 else:
                     print(f"Ignored command '{cmd}' in state '{state}'")
                     return None
@@ -92,14 +103,20 @@ async def websocket_handler(websocket, path):
         # Process any incoming command.
         cmd = await process_commands()
         if cmd:
+            if cmd == "inappropriate state":
+                await send_message(5, "Inappropriate state. Current State: " + state)
             if cmd == "precharge":
                 state = "precharging"
+                await send_message(2, "Precharging...")
             elif cmd == "start levitation":
                 state = "levitating"
+                await send_message(2, "Starting levitation...")
             elif cmd == "stop levitation":
                 state = "levitation_stopping"
+                await send_message(2, "Stopping levitation...")
             elif cmd == "discharge":
                 state = "discharging"
+                await send_message(2, "Discharging...")
             elif cmd == "fault":
                 state = "fault confirm"
                 await websocket.send(json.dumps({"id": "fault confirmed"}))
@@ -112,6 +129,7 @@ async def websocket_handler(websocket, path):
             if voltage >= 400:
                 voltage = 400
                 state = "precharged"
+                await send_message(4, "Precharge complete. State -> precharged.")
                 print("Precharge complete. State -> precharged.")
         elif state == "levitating":
             elevation += 1  # Increase elevation 1 mm per tick
@@ -120,6 +138,7 @@ async def websocket_handler(websocket, path):
                 elevation = 19
                 current = 11
                 state = "levitated"
+                await send_message(4, "Levitation complete. State -> levitated.")
                 print("Levitation complete. State -> levitated.")
         elif state == "motor_starting":
             velocity += 1  # Increase velocity by 1 km/h per tick
@@ -145,12 +164,14 @@ async def websocket_handler(websocket, path):
                 elevation = 0
                 current = 0
                 state = "precharged"
+                await send_message(4, "Levitation stopped. State -> initial.")                
                 print("Levitation stopped. State -> initial.")
         elif state == "discharging":
             voltage -= 50  # Fast discharge: drop 50 V per tick
             if voltage <= 0:
                 voltage = 0
                 state = "initial"
+                await send_message(4, "Discharge complete. State -> initial.")
                 print("Discharge complete. State -> initial.")
 
         # Build and send a data packet.
