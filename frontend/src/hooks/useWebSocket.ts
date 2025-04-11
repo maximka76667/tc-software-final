@@ -1,9 +1,10 @@
 import { useEffect, useState, useCallback, useRef } from "react";
+import { State } from "../lib/definitions";
 
 interface useWebSocketProps {
   url: string;
   onMessage: (message: string, severity?: number) => void;
-  // onTelemetryMessage: (data: T) => void;
+  onTelemetryData: (state: State) => void;
   onError: (message: string) => void;
   onConnectionError: () => void;
   onOpen: () => void;
@@ -14,7 +15,7 @@ interface useWebSocketProps {
 function useWebSocket<T>({
   url,
   onMessage,
-  // onTelemetryMessage,
+  onTelemetryData,
   onConnectionError,
   // onError,
   onOpen,
@@ -51,7 +52,7 @@ function useWebSocket<T>({
 
       if (id === "data") {
         setData(data);
-        // onTelemetryMessage(data);
+        onTelemetryData(packet["current_state"] as State);
       } else if (id === "message") {
         const { message, severity = 5 } = data;
         onMessage(message, severity);

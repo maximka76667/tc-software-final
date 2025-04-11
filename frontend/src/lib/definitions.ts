@@ -10,3 +10,22 @@ export interface Message {
   severity: number;
   time: string;
 }
+
+export type State =
+  | "initial"
+  | "precharging"
+  | "precharged"
+  | "levitating"
+  | "levitated"
+  | "levitation_stopping"
+  | "discharging";
+
+export type Command =
+  | "precharge"
+  | "discharge"
+  | "start levitation"
+  | "stop levitation";
+
+export type States = {
+  [S in State]: Command[];
+};

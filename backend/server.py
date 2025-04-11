@@ -104,7 +104,7 @@ async def websocket_handler(websocket, path):
         cmd = await process_commands()
         if cmd:
             if cmd == "inappropriate state":
-                await send_message(5, "Inappropriate state. Current State: " + state)
+                await send_message(5, f"Cannot execute command — system is in {state} state")
             if cmd == "precharge":
                 state = "precharging"
                 await send_message(2, "Precharging...")
@@ -129,8 +129,8 @@ async def websocket_handler(websocket, path):
             if voltage >= 400:
                 voltage = 400
                 state = "precharged"
-                await send_message(4, "Precharge complete. State -> precharged.")
-                print("Precharge complete. State -> precharged.")
+                await send_message(4, "Precharge complete.")
+                print("Precharge complete.")
         elif state == "levitating":
             elevation += 1  # Increase elevation 1 mm per tick
             current += 1    # Increase current 1 A per tick
@@ -138,8 +138,8 @@ async def websocket_handler(websocket, path):
                 elevation = 19
                 current = 11
                 state = "levitated"
-                await send_message(4, "Levitation complete. State -> levitated.")
-                print("Levitation complete. State -> levitated.")
+                await send_message(4, "Levitation complete.")
+                print("Levitation complete.")
         elif state == "motor_starting":
             velocity += 1  # Increase velocity by 1 km/h per tick
             current = 100  # Current at 100 A during acceleration
@@ -147,7 +147,7 @@ async def websocket_handler(websocket, path):
                 velocity = 30
                 current = 20  # Drop current to 20 A when cruising
                 state = "cruising"
-                print("Motor started. State -> cruising.")
+                print("Motor started.")
         elif state == "motor_stopping":
             velocity -= 1  # Decrease velocity by 1 km/h per tick
             current = 100  # Current remains 100 A during deceleration
@@ -155,7 +155,7 @@ async def websocket_handler(websocket, path):
                 velocity = 0
                 current = 11  # Then current returns to 11 A (levitation level)
                 state = "levitated"
-                print("Motor stopped. State -> levitated.")
+                print("Motor stopped.")
         elif state == "levitation_stopping":
             elevation -= 1  # Decrease elevation by 1 mm per tick
             if current > 0:
@@ -164,19 +164,20 @@ async def websocket_handler(websocket, path):
                 elevation = 0
                 current = 0
                 state = "precharged"
-                await send_message(4, "Levitation stopped. State -> initial.")                
-                print("Levitation stopped. State -> initial.")
+                await send_message(4, "Levitation stopped.")                
+                print("Levitation stopped.")
         elif state == "discharging":
             voltage -= 50  # Fast discharge: drop 50 V per tick
             if voltage <= 0:
                 voltage = 0
                 state = "initial"
-                await send_message(4, "Discharge complete. State -> initial.")
-                print("Discharge complete. State -> initial.")
+                await send_message(4, "Discharge complete.")
+                print("Discharge complete.")
 
         # Build and send a data packet.
         packet = {
             "id": "data",
+            "current_state": state,
             "data": {
                 "elevation": elevation,
                 "voltage": voltage,

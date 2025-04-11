@@ -1,5 +1,5 @@
 import { memo, useEffect, useRef } from "react";
-import { Message, Telemetry } from "../lib/definitions";
+import { Command, Message, State, States, Telemetry } from "../lib/definitions";
 import Charts from "../components/Charts";
 import { capitalizeWords } from "../lib/utils";
 import { commands } from "../lib/consts";
@@ -12,7 +12,18 @@ interface ControlProps {
   reconnect: () => void;
   sendCommand: (message: string) => void;
   messages: Message[];
+  currentState: State;
 }
+
+const statesButtons: States = {
+  initial: ["precharge"],
+  precharging: [],
+  precharged: ["discharge", "start levitation"],
+  levitating: [],
+  levitated: ["stop levitation"],
+  levitation_stopping: [],
+  discharging: [],
+};
 
 const Control = ({
   data,
@@ -21,6 +32,7 @@ const Control = ({
   reconnect,
   sendCommand,
   messages,
+  currentState,
 }: ControlProps) => {
   const messageEndRef = useRef<HTMLDivElement | null>(null);
 
@@ -40,26 +52,32 @@ const Control = ({
         <p className="text-center">
           Status:{" "}
           {error ? (
-            <span style={{ color: "red" }}>Offline</span>
+            <span className="text-red-700 font-medium">Offline</span>
           ) : isLoading ? (
-            <span style={{ color: "grey" }}>Connecting...</span>
+            <span className="text-gray-700 font-medium">Connecting...</span>
           ) : (
-            <span style={{ color: "green" }}>Online</span>
+            <span className="text-green-700 font-medium">Online</span>
           )}
         </p>
 
         {/* Reconnect block */}
         {error && (
-          <div className="text-center m-2">
+          <div className="text-center mt-2">
             <p>Connection lost. Try to reconnect</p>
-            <button onClick={() => reconnect()}>Retry</button>
+            {/* <button className="mt-4" onClick={() => reconnect()}>
+              Retry
+            </button> */}
           </div>
         )}
 
         <div className="flex flex-wrap mt-8 w-full justify-center gap-2">
           {commands.map((command) => (
             <button
-              disabled={isLoading || error}
+              disabled={
+                isLoading ||
+                error ||
+                !statesButtons[currentState].includes(command as Command)
+              }
               className="w-1/3"
               onClick={() => sendCommand(command)}
             >
@@ -68,16 +86,23 @@ const Control = ({
           ))}
         </div>
 
+        <p className="text-center m-10">
+          Current state:{" "}
+          <span className="text-stone-900 font-medium">
+            {capitalizeWords(currentState)}
+          </span>
+        </p>
+
         <div
           ref={messageEndRef}
-          className="message-box px-6 py-4 mt-20 rounded-3xl mx-8 h-[300px] overflow-y-scroll"
+          className="message-box px-6 py-4 mt-10 rounded-3xl mx-8 h-[300px] overflow-y-scroll"
         >
           {messages.map(({ message, severity, time }) => (
             <p className="m-1">
               <span className="text-gray-500">{`[${time}]`}</span>
               {" → "}
               <span
-                className={`message-severity-${severity} `}
+                className={`message-severity-${severity} font-medium`}
               >{`${message}`}</span>
             </p>
           ))}

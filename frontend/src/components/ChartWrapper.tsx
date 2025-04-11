@@ -53,7 +53,7 @@ const ChartWrapper = ({ metric, data }: ChartWrapper) => {
         },
       ]}
       width={850}
-      height={175}
+      height={200}
     />
   );
 };
