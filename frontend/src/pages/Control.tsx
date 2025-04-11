@@ -29,7 +29,7 @@ const Control = ({
   data,
   isLoading,
   error,
-  reconnect,
+  // reconnect,
   sendCommand,
   messages,
   currentState,
