@@ -1,15 +1,21 @@
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import { useControls } from "leva";
-import GridHelpers from "../components/GridHelpers";
+import GridHelpers from "../components/Viewer/GridHelpers";
 import { GRID_SIZE } from "../lib/consts";
 import { mapRange } from "../lib/utils";
+import { useTelemetryStore } from "../store";
+import { memo } from "react";
 
-interface ViewerProps {
-  elevation: number;
-}
+// interface ViewerProps {}
 
-const Viewer = ({ elevation }: ViewerProps) => {
+const Viewer = () => {
+  const { arrayTelemetryData } = useTelemetryStore();
+
+  const elevation =
+    arrayTelemetryData?.elevation[arrayTelemetryData.elevation.length - 1] || 0;
+
+  console.log(elevation);
   // Leva control options
   const { rotationX, rotationY, rotationZ } = useControls({
     // Transport box position
@@ -45,7 +51,7 @@ const Viewer = ({ elevation }: ViewerProps) => {
 
         {/* Transport Box */}
         {/* Outer mesh used to initially rotate transport by -90 degrees */}
-        {/* Note: changing default value and range for rotationY doesn't interact correctly with X and Z axises */}
+        {/* Reason Note: changing default value and range for rotationY doesn't interact correctly with X and Z axises */}
         <mesh rotation={[0, -Math.PI / 2, 0]}>
           <mesh
             position={[0, mappedElevation, 0]}
@@ -85,4 +91,4 @@ const Viewer = ({ elevation }: ViewerProps) => {
   );
 };
 
-export default Viewer;
+export default memo(Viewer);

@@ -10,6 +10,8 @@ createRoot(document.getElementById("root")!).render(
   <SnackbarProvider
     action={(snackbarId) => (
       <button
+        type="button"
+        title="Close"
         style={{ backgroundColor: "transparent" }}
         onClick={() => closeSnackbar(snackbarId)}
       >

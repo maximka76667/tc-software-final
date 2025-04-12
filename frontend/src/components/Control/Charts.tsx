@@ -1,6 +1,6 @@
 import { Fragment, memo, useState } from "react";
 import ChartWrapper from "./ChartWrapper";
-import { telemetryMetrics } from "../lib/consts";
+import { telemetryMetrics } from "../../lib/consts";
 
 interface ChartsBoxProps {
   data: { [key: string]: number };

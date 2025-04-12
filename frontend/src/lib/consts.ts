@@ -1,4 +1,5 @@
 import { VariantType } from "notistack";
+import { Command, States } from "./definitions";
 
 // Notifications' types
 export const statusHandlers: Record<
@@ -22,7 +23,7 @@ export const FAULT_INTERVAL = 1000;
 export const GRID_SIZE = 12;
 
 // Control panel commands
-export const commands = [
+export const commands: Command[] = [
   "precharge",
   "discharge",
   "start levitation",
@@ -37,4 +38,20 @@ export const telemetryMetrics = [
   // { label: "Velocity", color: "#F44336" },
   { label: "Voltage", color: "#FF9800" },
   { label: "Current", color: "#2196F3" },
+  // { label: "Altura", color: "#000" },
 ];
+
+export const statesButtons: States = {
+  initial: ["precharge"],
+  precharging: [],
+  precharged: ["discharge", "start levitation"],
+  levitating: [],
+  levitated: ["stop levitation"],
+  levitation_stopping: [],
+  discharging: [],
+};
+
+export const telemetryKeys = telemetryMetrics.reduce(
+  (array, metric) => [...array, metric.label.toLowerCase()],
+  [] as string[]
+);

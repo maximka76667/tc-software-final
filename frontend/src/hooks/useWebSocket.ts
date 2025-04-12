@@ -1,9 +1,10 @@
-import { useEffect, useState, useCallback, useRef } from "react";
-import { State } from "../lib/definitions";
+import { useEffect, useCallback, useRef } from "react";
+import { Message, State, Telemetry } from "../lib/definitions";
+import { useTelemetryStore, useWebSocketStore } from "../store";
 
 interface useWebSocketProps {
   url: string;
-  onMessage: (message: string, severity?: number) => void;
+  onMessage: (message: Message) => void;
   onTelemetryData: (state: State) => void;
   onError: (message: string) => void;
   onConnectionError: () => void;
@@ -12,7 +13,7 @@ interface useWebSocketProps {
   onClose: () => void;
 }
 
-function useWebSocket<T>({
+function useWebSocket({
   url,
   onMessage,
   onTelemetryData,
@@ -22,17 +23,30 @@ function useWebSocket<T>({
   onStart,
   onClose,
 }: useWebSocketProps) {
-  const [data, setData] = useState<T | null>(null);
-  const [error, setError] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState(false);
+  // const [data, setData] = useState<T | null>(null);
+  // const [error, setError] = useState<boolean>(false);
+  // const [isLoading, setIsLoading] = useState(false);
 
-  const [isFaultConfirmed, setIsFaultConfirmed] = useState(false);
+  // const [isFaultConfirmed, setIsFaultConfirmed] = useState(false);
 
   const webSocketRef = useRef<WebSocket | null>(null);
 
-  const sendCommand = (command: string) => {
+  const {
+    data,
+    // setData,
+    error,
+    setError,
+    isLoading,
+    setIsLoading,
+    isFaultConfirmed,
+    setIsFaultConfirmed,
+  } = useWebSocketStore();
+
+  const { addArrayTelemetryData } = useTelemetryStore();
+
+  const sendCommand = useCallback((command: string) => {
     webSocketRef.current?.send(JSON.stringify({ id: command }));
-  };
+  }, []);
 
   const connect = useCallback(() => {
     if (webSocketRef.current) {
@@ -51,11 +65,11 @@ function useWebSocket<T>({
       const { id, data } = packet;
 
       if (id === "data") {
-        setData(data);
+        addArrayTelemetryData(data as Telemetry);
         onTelemetryData(packet["current_state"] as State);
       } else if (id === "message") {
-        const { message, severity = 5 } = data;
-        onMessage(message, severity);
+        const { message, severity } = data;
+        onMessage({ message, severity } as Message);
       } else if (id === "fault confirmed") {
         setIsFaultConfirmed(true);
       }

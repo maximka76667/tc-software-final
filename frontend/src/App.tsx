@@ -1,4 +1,4 @@
-import { lazy, useState } from "react";
+import { lazy } from "react";
 import "./App.css";
 import {
   BrowserRouter as Router,
@@ -8,25 +8,15 @@ import {
 } from "react-router-dom";
 import { useSnackbarHandler } from "./hooks/useSnackbarHandler";
 import useWebSocket from "./hooks/useWebSocket";
-import { Message, State, Telemetry } from "./lib/definitions";
 import Viewer from "./pages/Viewer";
 import useKeepAlive from "./hooks/useKeepAlive";
-import Control from "./pages/Control";
-import { formatDateTime } from "./lib/utils";
+import { useWebSocketStore } from "./store";
 
 const Home = lazy(() => import("./pages/Home"));
-// const Control = lazy(() => import("./pages/Control"));
+const Control = lazy(() => import("./pages/Control"));
 
 function App() {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      message: "Application ready",
-      severity: 1,
-      time: formatDateTime(new Date()),
-    },
-  ]);
-
-  const [currentState, setCurrentState] = useState<State>("initial");
+  const { setCurrentState, addMessage } = useWebSocketStore();
 
   const {
     handleClose,
@@ -37,26 +27,18 @@ function App() {
     // showMessage,
   } = useSnackbarHandler();
 
-  const insertMessage = (message: string, severity = 5) => {
-    setMessages((messages) => [
-      ...messages,
-      { message, severity, time: formatDateTime(new Date()) },
-    ]);
-  };
+  const { reconnect, sendCommand } = useWebSocket({
+    url: "ws://localhost:6789",
+    onTelemetryData: (state) => setCurrentState(state),
+    onMessage: addMessage,
+    onConnectionError: handleConnectionError,
+    onError: handleError,
+    onOpen: handleOpen,
+    onStart: handleStart,
+    onClose: handleClose,
+  });
 
-  const { data, error, isLoading, reconnect, sendCommand, isFaultConfirmed } =
-    useWebSocket<Telemetry>({
-      url: "ws://localhost:6789",
-      onTelemetryData: (state) => setCurrentState(state),
-      onMessage: insertMessage,
-      onConnectionError: handleConnectionError,
-      onError: handleError,
-      onOpen: handleOpen,
-      onStart: handleStart,
-      onClose: handleClose,
-    });
-
-  useKeepAlive({ sendCommand, isFaultConfirmed });
+  useKeepAlive({ sendCommand });
 
   return (
     <Router>
@@ -77,22 +59,9 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route
           path="/control"
-          element={
-            <Control
-              data={data}
-              error={error}
-              isLoading={isLoading}
-              reconnect={reconnect}
-              sendCommand={sendCommand}
-              messages={messages}
-              currentState={currentState}
-            />
-          }
+          element={<Control reconnect={reconnect} sendCommand={sendCommand} />}
         />
-        <Route
-          path="/viewer"
-          element={<Viewer elevation={data?.elevation || 0} />}
-        />
+        <Route path="/viewer" element={<Viewer />} />
       </Routes>
     </Router>
   );

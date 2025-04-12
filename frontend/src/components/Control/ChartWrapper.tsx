@@ -1,33 +1,26 @@
 import { LineChart } from "@mui/x-charts";
-import { memo, useEffect, useState } from "react";
-import { addAndGetLastNElements, arrayUntil } from "../lib/utils";
-import { NUMBER_GRAPHICS_ELEMENTS } from "../lib/consts";
+import { memo } from "react";
+import { arrayUntil } from "../../lib/utils";
+import { NUMBER_GRAPHICS_ELEMENTS } from "../../lib/consts";
+import { useTelemetryStore } from "../../store";
+import { Telemetry } from "../../lib/definitions";
+import { useShallow } from "zustand/react/shallow";
 
 interface ChartWrapper {
   metric: { label: string; color: string };
   data: { [key: string]: number };
 }
 
-const ChartWrapper = ({ metric, data }: ChartWrapper) => {
-  const [lastData, setLastData] = useState<number[]>([]);
+const ChartWrapper = ({ metric }: ChartWrapper) => {
+  const { arrayMetricData } = useTelemetryStore(
+    useShallow((state) => ({
+      arrayMetricData:
+        state.arrayTelemetryData[metric.label.toLowerCase() as keyof Telemetry],
+    }))
+  );
 
-  useEffect(() => {
-    if (!data) {
-      return;
-    }
-
-    setLastData((prevData) =>
-      addAndGetLastNElements(
-        prevData,
-        data[metric.label.toLowerCase()],
-        NUMBER_GRAPHICS_ELEMENTS
-      )
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]);
-
-  const sum = lastData.reduce((prev, value) => prev + value, 0);
-  const avg = sum / lastData.length;
+  const sum = arrayMetricData.reduce((prev, value) => prev + value, 0);
+  const avg = sum / arrayMetricData.length;
 
   return (
     <LineChart
@@ -41,7 +34,7 @@ const ChartWrapper = ({ metric, data }: ChartWrapper) => {
       }}
       series={[
         {
-          data: lastData,
+          data: arrayMetricData,
           area: true,
           label: metric.label,
           color: metric.color,

@@ -1,13 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import { FAULT_INTERVAL, PING_INTERVAL, PING_TIMEOUT } from "../lib/consts";
 import { fetchKeepAlive } from "../lib/api";
+import { useWebSocketStore } from "../store";
 
 interface useKeepAliveProps {
   sendCommand: (command: string) => void;
-  isFaultConfirmed: boolean;
 }
 
-const useKeepAlive = ({ sendCommand, isFaultConfirmed }: useKeepAliveProps) => {
+const useKeepAlive = ({ sendCommand }: useKeepAliveProps) => {
+  const { isFaultConfirmed } = useWebSocketStore();
+
   // Ping pong states
   const [isFault, setIsFault] = useState(false);
   const pongTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -32,12 +34,12 @@ const useKeepAlive = ({ sendCommand, isFaultConfirmed }: useKeepAliveProps) => {
   const establishSendingPings = async (pingIntervalId: NodeJS.Timeout) => {
     try {
       setupTimeout(pingIntervalId);
-      console.log("Sending ping...");
+      // console.log("Sending ping...");
 
       const res = await fetchKeepAlive("ping");
 
       if (res?.pong) {
-        console.log("Pong received!");
+        // console.log("Pong received!");
         if (pongTimeoutRef.current) {
           clearTimeout(pongTimeoutRef.current);
           pongTimeoutRef.current = null;

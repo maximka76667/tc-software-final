@@ -1,8 +1,8 @@
 export interface Telemetry {
   elevation: number;
-  velocity: number;
   voltage: number;
   current: number;
+  velocity: number;
 }
 
 export interface Message {
