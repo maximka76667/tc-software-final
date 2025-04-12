@@ -31,7 +31,7 @@ const Viewer = () => {
   const mappedElevation = mapRange(elevation, 0, 38, 2, GRID_SIZE);
 
   return (
-    <div className="w-full h-[calc(100vh-64px)]">
+    <div className="w-full flex-1">
       <Canvas
         className="h-full w-full"
         camera={{

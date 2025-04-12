@@ -29,3 +29,12 @@ export type Command =
 export type States = {
   [S in State]: Command[];
 };
+
+export interface Metric {
+  label: string;
+  color: string;
+}
+
+export type ArrayData<T> = {
+  [Key in keyof T]: number[];
+};

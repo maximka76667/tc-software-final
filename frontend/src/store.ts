@@ -56,9 +56,19 @@
 // }));
 
 import { create } from "zustand";
-import { Message, State, Telemetry } from "./lib/definitions";
+import {
+  ArrayData,
+  Message,
+  Metric,
+  State,
+  Telemetry,
+} from "./lib/definitions";
 import { formatDateTime } from "./lib/utils";
-import { NUMBER_GRAPHICS_ELEMENTS, telemetryKeys } from "./lib/consts";
+import {
+  NUMBER_GRAPHICS_ELEMENTS,
+  telemetryKeys,
+  telemetryMetrics,
+} from "./lib/consts";
 
 interface WebSocketStore<T> {
   data: T | null;
@@ -120,10 +130,6 @@ export const useWebSocketStore = create<WebSocketStore<Telemetry>>((set) => ({
   clearMessages: () => set({ messages: [] }),
 }));
 
-type ArrayData<T> = {
-  [Key in keyof T]: number[];
-};
-
 function generateDefaultArrayTelemetryData() {
   const keys = telemetryKeys;
 
@@ -134,17 +140,15 @@ function generateDefaultArrayTelemetryData() {
   }, {} as ArrayData<Telemetry>);
 }
 
-interface Metric {
-  label: string;
-  color: string;
-}
-
 interface TelemetryStore {
   arrayTelemetryData: ArrayData<Telemetry>;
   //   setArrayTelemetryData: (data: { [key in keyof Telemetry]: number[] }) => void;
   addArrayTelemetryData: (data: Telemetry) => void;
   telemetryMetrics: Metric[];
   setTelemetryMetrics: (metrics: Metric[]) => void;
+
+  activeCharts: string[];
+  toggleChart: (metric: string) => void;
 }
 
 export const useTelemetryStore = create<TelemetryStore>((set) => ({
@@ -171,4 +175,15 @@ export const useTelemetryStore = create<TelemetryStore>((set) => ({
   telemetryMetrics: [],
   setTelemetryMetrics: (telemetryMetrics: Metric[]) =>
     set({ telemetryMetrics }),
+
+  activeCharts: telemetryMetrics.map((telemetry) => telemetry.label),
+
+  toggleChart: (metric: string) =>
+    set((state) => {
+      return {
+        activeCharts: state.activeCharts.includes(metric)
+          ? state.activeCharts.filter((m) => m !== metric)
+          : [...state.activeCharts, metric],
+      };
+    }),
 }));

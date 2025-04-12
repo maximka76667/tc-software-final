@@ -7,20 +7,22 @@ import { IoMdClose } from "react-icons/io";
 
 createRoot(document.getElementById("root")!).render(
   // <StrictMode>
-  <SnackbarProvider
-    action={(snackbarId) => (
-      <button
-        type="button"
-        title="Close"
-        style={{ backgroundColor: "transparent" }}
-        onClick={() => closeSnackbar(snackbarId)}
-      >
-        <IoMdClose />
-      </button>
-    )}
-    maxSnack={10}
-  >
-    <App />
-  </SnackbarProvider>
+  <div className="flex flex-col h-screen w-full">
+    <SnackbarProvider
+      action={(snackbarId) => (
+        <button
+          type="button"
+          title="Close"
+          style={{ backgroundColor: "transparent" }}
+          onClick={() => closeSnackbar(snackbarId)}
+        >
+          <IoMdClose />
+        </button>
+      )}
+      maxSnack={10}
+    >
+      <App />
+    </SnackbarProvider>
+  </div>
   // </StrictMode>
 );

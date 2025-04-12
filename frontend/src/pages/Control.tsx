@@ -6,6 +6,7 @@ import { useWebSocketStore } from "../store";
 import Reconnect from "../components/Control/Reconnect";
 import CommandsBox from "../components/Control/CommandsBox";
 import CurrentState from "../components/Control/CurrentState";
+import { useShallow } from "zustand/react/shallow";
 
 interface ControlProps {
   reconnect: () => void;
@@ -16,7 +17,9 @@ const Control = ({
   // reconnect,
   sendCommand,
 }: ControlProps) => {
-  const { data } = useWebSocketStore();
+  const { data } = useWebSocketStore(
+    useShallow((state) => ({ data: state.data }))
+  );
 
   return (
     <div className="flex w-full">
@@ -24,7 +27,7 @@ const Control = ({
         <Charts data={data as unknown as { [key: string]: number }} />
       </div>
 
-      <div className="w-2/5 sticky top-0 h-[500px] py-15">
+      <div className="w-2/5 sticky top-0 py-15 h-[800px]">
         {/* WebSocket connection status */}
         <StatusBox />
 

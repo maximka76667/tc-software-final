@@ -1,27 +1,22 @@
-import { Fragment, memo, useState } from "react";
+import { Fragment, memo } from "react";
 import ChartWrapper from "./ChartWrapper";
 import { telemetryMetrics } from "../../lib/consts";
+import { useTelemetryStore } from "../../store";
+import { useShallow } from "zustand/react/shallow";
 
 interface ChartsBoxProps {
   data: { [key: string]: number };
 }
 
 // Make all telemetrics active by default
-const activeChartsDefault = telemetryMetrics.map(
-  (telemetry) => telemetry.label
-);
 
 const Charts = ({ data }: ChartsBoxProps) => {
-  const [activeCharts, setActiveCharts] =
-    useState<string[]>(activeChartsDefault);
-
-  const toggleChart = (metric: string) => {
-    setActiveCharts((prev) =>
-      prev.includes(metric)
-        ? prev.filter((m) => m !== metric)
-        : [...prev, metric]
-    );
-  };
+  const { activeCharts, toggleChart } = useTelemetryStore(
+    useShallow((state) => ({
+      activeCharts: state.activeCharts,
+      toggleChart: state.toggleChart,
+    }))
+  );
 
   return (
     <>
