@@ -15,7 +15,6 @@ const Viewer = () => {
   const elevation =
     arrayTelemetryData?.elevation[arrayTelemetryData.elevation.length - 1] || 0;
 
-  console.log(elevation);
   // Leva control options
   const { rotationX, rotationY, rotationZ } = useControls({
     // Transport box position
