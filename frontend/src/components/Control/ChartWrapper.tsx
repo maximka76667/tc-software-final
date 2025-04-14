@@ -12,11 +12,11 @@ interface ChartWrapper {
 }
 
 const ChartWrapper = ({ metric }: ChartWrapper) => {
-  const { arrayMetricData } = useTelemetryStore(
-    useShallow((state) => ({
-      arrayMetricData:
-        state.arrayTelemetryData[metric.label.toLowerCase() as keyof Telemetry],
-    }))
+  const arrayMetricData = useTelemetryStore(
+    useShallow(
+      (state) =>
+        state.arrayTelemetryData[metric.label.toLowerCase() as keyof Telemetry]
+    )
   );
 
   const sum = arrayMetricData.reduce((prev, value) => prev + value, 0);

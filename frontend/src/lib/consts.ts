@@ -1,5 +1,8 @@
 import { VariantType } from "notistack";
-import { Command, States } from "./definitions";
+import { Command, Metric, States } from "./definitions";
+
+// Ping endpoint base url
+export const API_BASE_URL = "http://localhost:3000";
 
 // Notifications' types
 export const statusHandlers: Record<
@@ -12,9 +15,10 @@ export const statusHandlers: Record<
   500: { type: "error" },
 };
 
-// Ping pong consts
+// Number of elements in charts
 export const NUMBER_GRAPHICS_ELEMENTS = 10;
 
+// Ping pong consts
 export const PING_INTERVAL = 1000;
 export const PING_TIMEOUT = 500; // Timeout for sending fault command if pong doesn't arrive
 export const FAULT_INTERVAL = 1000;
@@ -33,7 +37,7 @@ export const commands: Command[] = [
 ];
 
 // Control panel charts
-export const telemetryMetrics = [
+export const telemetryMetrics: Metric[] = [
   { label: "Elevation", color: "#4CAF50" },
   // { label: "Velocity", color: "#F44336" },
   { label: "Voltage", color: "#FF9800" },
@@ -41,7 +45,8 @@ export const telemetryMetrics = [
   // { label: "Altura", color: "#000" },
 ];
 
-export const statesButtons: States = {
+// Possible transitions from state
+export const stateTransitions: States = {
   initial: ["precharge"],
   precharging: [],
   precharged: ["discharge", "start levitation"],
@@ -51,6 +56,7 @@ export const statesButtons: States = {
   discharging: [],
 };
 
+// Metric names
 export const telemetryKeys = telemetryMetrics.reduce(
   (array, metric) => [...array, metric.label.toLowerCase()],
   [] as string[]

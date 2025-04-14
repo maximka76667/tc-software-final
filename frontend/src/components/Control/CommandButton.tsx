@@ -1,5 +1,5 @@
 import { useWebSocketStore } from "../../store";
-import { statesButtons } from "../../lib/consts";
+import { stateTransitions } from "../../lib/consts";
 import { Command } from "../../lib/definitions";
 import { capitalizeWords } from "../../lib/utils";
 import { useShallow } from "zustand/react/shallow";
@@ -21,7 +21,7 @@ const CommandButton = ({ command, sendCommand }: CommandButtonProps) => {
   const isDisabled =
     isLoading ||
     error ||
-    !statesButtons[currentState].includes(command as Command);
+    !stateTransitions[currentState].includes(command as Command);
 
   return (
     <button

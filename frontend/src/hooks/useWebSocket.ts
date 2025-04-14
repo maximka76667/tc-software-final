@@ -1,11 +1,12 @@
 import { useEffect, useCallback, useRef } from "react";
 import { Message, State, Telemetry } from "../lib/definitions";
 import { useTelemetryStore, useWebSocketStore } from "../store";
+import { useShallow } from "zustand/shallow";
 
 interface useWebSocketProps {
   url: string;
   onMessage: (message: Message) => void;
-  onTelemetryData: (state: State) => void;
+  onTelemetryExtras: (state: State, angles: [number, number, number]) => void;
   onError: (message: string) => void;
   onConnectionError: () => void;
   onOpen: () => void;
@@ -16,19 +17,13 @@ interface useWebSocketProps {
 function useWebSocket({
   url,
   onMessage,
-  onTelemetryData,
+  onTelemetryExtras,
   onConnectionError,
   // onError,
   onOpen,
   onStart,
   onClose,
 }: useWebSocketProps) {
-  // const [data, setData] = useState<T | null>(null);
-  // const [error, setError] = useState<boolean>(false);
-  // const [isLoading, setIsLoading] = useState(false);
-
-  // const [isFaultConfirmed, setIsFaultConfirmed] = useState(false);
-
   const webSocketRef = useRef<WebSocket | null>(null);
 
   const {
@@ -40,9 +35,21 @@ function useWebSocket({
     setIsLoading,
     isFaultConfirmed,
     setIsFaultConfirmed,
-  } = useWebSocketStore();
+  } = useWebSocketStore(
+    useShallow((state) => ({
+      data: state.data,
+      error: state.error,
+      setError: state.setError,
+      isLoading: state.isLoading,
+      setIsLoading: state.setIsLoading,
+      isFaultConfirmed: state.isFaultConfirmed,
+      setIsFaultConfirmed: state.setIsFaultConfirmed,
+    }))
+  );
 
-  const { addArrayTelemetryData } = useTelemetryStore();
+  const addArrayTelemetryData = useTelemetryStore(
+    (state) => state.addArrayTelemetryData
+  );
 
   const sendCommand = useCallback((command: string) => {
     webSocketRef.current?.send(JSON.stringify({ id: command }));
@@ -66,7 +73,10 @@ function useWebSocket({
 
       if (id === "data") {
         addArrayTelemetryData(data as Telemetry);
-        onTelemetryData(packet["current_state"] as State);
+        onTelemetryExtras(
+          packet["current_state"] as State,
+          packet["angles"] as [number, number, number]
+        );
       } else if (id === "message") {
         const { message, severity } = data;
         onMessage({ message, severity } as Message);
@@ -93,6 +103,7 @@ function useWebSocket({
       setIsLoading(false);
       onClose();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onClose, onConnectionError, onMessage, onOpen, onStart, url]);
 
   useEffect(() => {

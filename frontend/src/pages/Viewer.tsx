@@ -1,34 +1,44 @@
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
-import { useControls } from "leva";
+// import { useControls } from "leva";
 import GridHelpers from "../components/Viewer/GridHelpers";
-import { GRID_SIZE } from "../lib/consts";
-import { mapRange } from "../lib/utils";
-import { useTelemetryStore } from "../store";
+import { GRID_SIZE, NUMBER_GRAPHICS_ELEMENTS } from "../lib/consts";
+import { degreesToRadians, mapRange } from "../lib/utils";
+import { useTelemetryStore, useWebSocketStore } from "../store";
 import { memo } from "react";
+import { useShallow } from "zustand/shallow";
 
 // interface ViewerProps {}
 
 const Viewer = () => {
-  const { arrayTelemetryData } = useTelemetryStore();
+  const elevation = useTelemetryStore(
+    useShallow((state) =>
+      mapRange(
+        state.arrayTelemetryData.elevation[NUMBER_GRAPHICS_ELEMENTS - 1],
+        0,
+        38,
+        2,
+        GRID_SIZE
+      )
+    )
+  );
 
-  const elevation =
-    arrayTelemetryData?.elevation[arrayTelemetryData.elevation.length - 1] || 0;
+  const [rotationX, rotationY, rotationZ] = useWebSocketStore(
+    useShallow((state) => state.angles.map(degreesToRadians))
+  );
 
   // Leva control options
-  const { rotationX, rotationY, rotationZ } = useControls({
-    // Transport box position
-    // positionY: { value: GRID_SIZE / 2, min: 2, max: GRID_SIZE - 2, step: 0.1 },
+  // const { rotationX, rotationY, rotationZ } = useControls({
+  // Transport box position
+  // positionY: { value: GRID_SIZE / 2, min: 2, max: GRID_SIZE - 2, step: 0.1 },
 
-    // Transport box rotation
-    // for X, Y and Z axis has to be set between -Math.PI / 2 and Math.PI / 2
-    // with default value 0 and -90 to 90 degrees range
-    rotationX: { value: 0, min: -Math.PI / 2, max: Math.PI / 2, step: 0.05 },
-    rotationY: { value: 0, min: -Math.PI / 2, max: Math.PI / 2, step: 0.05 },
-    rotationZ: { value: 0, min: -Math.PI / 2, max: Math.PI / 2, step: 0.05 },
-  });
-
-  const mappedElevation = mapRange(elevation, 0, 38, 2, GRID_SIZE);
+  // Transport box rotation
+  // for X, Y and Z axis has to be set between -Math.PI / 2 and Math.PI / 2
+  // with default value 0 and -90 to 90 degrees range
+  // rotationX: { value: 0, min: -Math.PI / 2, max: Math.PI / 2, step: 0.05 },
+  // rotationY: { value: 0, min: -Math.PI / 2, max: Math.PI / 2, step: 0.05 },
+  // rotationZ: { value: 0, min: -Math.PI / 2, max: Math.PI / 2, step: 0.05 },
+  // });
 
   return (
     <div className="w-full flex-1">
@@ -53,7 +63,7 @@ const Viewer = () => {
         {/* Reason Note: changing default value and range for rotationY doesn't interact correctly with X and Z axises */}
         <mesh rotation={[0, -Math.PI / 2, 0]}>
           <mesh
-            position={[0, mappedElevation, 0]}
+            position={[0, elevation, 0]}
             rotation={[rotationX, rotationY, rotationZ]}
           >
             <boxGeometry args={[6, 2, 2]} />

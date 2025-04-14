@@ -38,3 +38,5 @@ export interface Metric {
 export type ArrayData<T> = {
   [Key in keyof T]: number[];
 };
+
+export type Angles = [number, number, number];

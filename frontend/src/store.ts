@@ -57,6 +57,7 @@
 
 import { create } from "zustand";
 import {
+  Angles,
   ArrayData,
   Message,
   Metric,
@@ -90,6 +91,9 @@ interface WebSocketStore<T> {
   setMessages: (messages: Message[]) => void;
   addMessage: (message: Message) => void;
   clearMessages: () => void;
+
+  angles: Angles;
+  setAngles: (angles: Angles) => void;
 }
 
 export const useWebSocketStore = create<WebSocketStore<Telemetry>>((set) => ({
@@ -128,6 +132,9 @@ export const useWebSocketStore = create<WebSocketStore<Telemetry>>((set) => ({
       ],
     })),
   clearMessages: () => set({ messages: [] }),
+
+  angles: [0, 0, 0],
+  setAngles: (angles: Angles) => set({ angles }),
 }));
 
 function generateDefaultArrayTelemetryData() {
@@ -154,6 +161,7 @@ interface TelemetryStore {
 export const useTelemetryStore = create<TelemetryStore>((set) => ({
   arrayTelemetryData: generateDefaultArrayTelemetryData(),
 
+  // Pass through possible keys in telemetry data and add new value into store
   addArrayTelemetryData: (data) => {
     set((state) => {
       const arrayData = state.arrayTelemetryData;

@@ -1,12 +1,16 @@
-import { memo } from "react";
-import Charts from "../components/Control/Charts";
-import MessagesBox from "../components/Control/MessagesBox";
-import StatusBox from "../components/Control/StatusBox";
+import { lazy, memo, Suspense } from "react";
 import { useWebSocketStore } from "../store";
-import Reconnect from "../components/Control/Reconnect";
-import CommandsBox from "../components/Control/CommandsBox";
-import CurrentState from "../components/Control/CurrentState";
+
 import { useShallow } from "zustand/react/shallow";
+import SuspenseLoading from "../components/SuspenseLoading";
+
+// Lazy load the components
+const Charts = lazy(() => import("../components/Control/Charts"));
+const MessagesBox = lazy(() => import("../components/Control/MessagesBox"));
+const StatusBox = lazy(() => import("../components/Control/StatusBox"));
+const Reconnect = lazy(() => import("../components/Control/Reconnect"));
+const CommandsBox = lazy(() => import("../components/Control/CommandsBox"));
+const CurrentState = lazy(() => import("../components/Control/CurrentState"));
 
 interface ControlProps {
   reconnect: () => void;
@@ -29,7 +33,9 @@ const Control = ({
 
       <div className="w-2/5 sticky top-0 py-15 h-[800px]">
         {/* WebSocket connection status */}
-        <StatusBox />
+        <Suspense fallback={<SuspenseLoading />}>
+          <StatusBox />
+        </Suspense>
 
         {/* Reconnect block */}
         <Reconnect />

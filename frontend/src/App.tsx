@@ -1,22 +1,26 @@
-import { lazy } from "react";
+import { lazy, Suspense } from "react";
 import "./App.css";
+import { Angles, State } from "./lib/definitions";
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   NavLink,
 } from "react-router-dom";
+import useKeepAlive from "./hooks/useKeepAlive";
 import { useSnackbarHandler } from "./hooks/useSnackbarHandler";
 import useWebSocket from "./hooks/useWebSocket";
-import Viewer from "./pages/Viewer";
-import useKeepAlive from "./hooks/useKeepAlive";
+
 import { useWebSocketStore } from "./store";
+
+import SuspenseLoading from "./components/SuspenseLoading";
 
 const Home = lazy(() => import("./pages/Home"));
 const Control = lazy(() => import("./pages/Control"));
+const Viewer = lazy(() => import("./pages/Viewer"));
 
 function App() {
-  const { setCurrentState, addMessage } = useWebSocketStore();
+  const { setCurrentState, addMessage, setAngles } = useWebSocketStore();
 
   const {
     handleClose,
@@ -27,9 +31,14 @@ function App() {
     // showMessage,
   } = useSnackbarHandler();
 
+  const handleTelemetryExtras = (state: State, angels: Angles) => {
+    setCurrentState(state);
+    setAngles(angels);
+  };
+
   const { reconnect, sendCommand } = useWebSocket({
     url: "ws://localhost:6789",
-    onTelemetryData: (state) => setCurrentState(state),
+    onTelemetryExtras: handleTelemetryExtras,
     onMessage: addMessage,
     onConnectionError: handleConnectionError,
     onError: handleError,
@@ -56,12 +65,30 @@ function App() {
         </ul>
       </nav>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route
+          path="/"
+          element={
+            <Suspense fallback={<SuspenseLoading />}>
+              <Home />
+            </Suspense>
+          }
+        />
         <Route
           path="/control"
-          element={<Control reconnect={reconnect} sendCommand={sendCommand} />}
+          element={
+            <Suspense fallback={<SuspenseLoading />}>
+              <Control reconnect={reconnect} sendCommand={sendCommand} />
+            </Suspense>
+          }
         />
-        <Route path="/viewer" element={<Viewer />} />
+        <Route
+          path="/viewer"
+          element={
+            <Suspense fallback={<SuspenseLoading />}>
+              <Viewer />
+            </Suspense>
+          }
+        />
       </Routes>
     </Router>
   );

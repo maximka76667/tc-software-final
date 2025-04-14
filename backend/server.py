@@ -174,10 +174,16 @@ async def websocket_handler(websocket, path):
                 await send_message(4, "Discharge complete.")
                 print("Discharge complete.")
 
+        angles = [0,0,0]
+
+        if(elevation > 0):
+            angles = [random.randrange(-15, 15), random.randrange(-15, 15), random.randrange(-15, 15)]
+
         # Build and send a data packet.
         packet = {
             "id": "data",
             "current_state": state,
+            "angles": angles,
             "data": {
                 "elevation": elevation,
                 "voltage": voltage,
