@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import { memo } from "react";
 import { useWebSocketStore } from "../../store";
 import { useShallow } from "zustand/react/shallow";
 

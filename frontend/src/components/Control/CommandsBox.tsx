@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import { memo } from "react";
 import { commands } from "../../lib/consts";
 import CommandButton from "./CommandButton";
 

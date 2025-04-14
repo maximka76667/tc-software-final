@@ -8,8 +8,6 @@ import { useTelemetryStore, useWebSocketStore } from "../store";
 import { memo } from "react";
 import { useShallow } from "zustand/shallow";
 
-// interface ViewerProps {}
-
 const Viewer = () => {
   const elevation = useTelemetryStore(
     useShallow((state) =>

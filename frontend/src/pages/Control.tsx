@@ -46,6 +46,7 @@ const Control = ({
         {/* Current state block */}
         <CurrentState />
 
+        {/* Messages */}
         <MessagesBox />
       </div>
     </div>
