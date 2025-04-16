@@ -141,7 +141,7 @@ function generateDefaultArrayTelemetryData() {
   const keys = telemetryKeys;
 
   return keys.reduce((acc, key) => {
-    acc[key as keyof Telemetry] = new Array(10).fill(0);
+    acc[key as keyof Telemetry] = new Array(NUMBER_GRAPHICS_ELEMENTS).fill(0);
 
     return acc;
   }, {} as ArrayData<Telemetry>);

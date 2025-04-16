@@ -11,7 +11,6 @@ state = "initial"  # initial, precharging, precharged, levitating, levitated, mo
 voltage = 0.0      # in Volts
 elevation = 0.0    # in millimeters
 current = 0.0      # in Amperes
-velocity = 0.0     # in km/h
 
 # Tick interval (seconds)
 TICK = 0.1
@@ -140,22 +139,6 @@ async def websocket_handler(websocket, path):
                 state = "levitated"
                 await send_message(4, "Levitation complete.")
                 print("Levitation complete.")
-        elif state == "motor_starting":
-            velocity += 1  # Increase velocity by 1 km/h per tick
-            current = 100  # Current at 100 A during acceleration
-            if velocity >= 30:
-                velocity = 30
-                current = 20  # Drop current to 20 A when cruising
-                state = "cruising"
-                print("Motor started.")
-        elif state == "motor_stopping":
-            velocity -= 1  # Decrease velocity by 1 km/h per tick
-            current = 100  # Current remains 100 A during deceleration
-            if velocity <= 0:
-                velocity = 0
-                current = 11  # Then current returns to 11 A (levitation level)
-                state = "levitated"
-                print("Motor stopped.")
         elif state == "levitation_stopping":
             elevation -= 1  # Decrease elevation by 1 mm per tick
             if current > 0:
@@ -174,9 +157,9 @@ async def websocket_handler(websocket, path):
                 await send_message(4, "Discharge complete.")
                 print("Discharge complete.")
 
-        angles = [0,0,0]
+        angles = [0, 0, 0]
 
-        if(elevation > 0):
+        if elevation > 0:
             angles = [random.randrange(-15, 15), random.randrange(-15, 15), random.randrange(-15, 15)]
 
         # Build and send a data packet.

@@ -8,17 +8,17 @@
 }
 
 .message-severity-2 {
-  color: #2a5d8f; /* Medium Blue */
+  color: #4f89c4; /* Medium Blue */
   background: none;
 }
 
 .message-severity-3 {
-  color: #00796b; /* Teal */
+  color: #01cab2; /* Teal */
   background: none;
 }
 
 .message-severity-4 {
-  color: #388e3c; /* Dark Green */
+  color: #29cb31; /* Dark Green */
   background: none;
 }
 
