@@ -10,14 +10,10 @@ export const fetchKeepAlive = async (endpoint: string) => {
     });
 
     if (!res.ok) throw new Error("Ping failed");
-    const json = await res.json();
-    return json;
-
+    return await res.json();
+    
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (_: unknown) {
-    return new Response(JSON.stringify({ error: "Failed to send command" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+      return { error: "Failed to send command" };
   }
 };
