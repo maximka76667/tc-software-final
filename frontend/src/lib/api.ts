@@ -4,9 +4,6 @@ export const fetchKeepAlive = async (endpoint: string) => {
   try {
     const res = await fetch(`${API_BASE_URL}/${endpoint}`, {
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
     });
 
     if (!res.ok) throw new Error("Ping failed");

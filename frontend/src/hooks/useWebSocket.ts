@@ -27,7 +27,6 @@ function useWebSocket({
   const webSocketRef = useRef<WebSocket | null>(null);
 
   const {
-    data,
     // setData,
     error,
     setError,
@@ -37,7 +36,6 @@ function useWebSocket({
     setIsFaultConfirmed,
   } = useWebSocketStore(
     useShallow((state) => ({
-      data: state.data,
       error: state.error,
       setError: state.setError,
       isLoading: state.isLoading,
@@ -120,7 +118,6 @@ function useWebSocket({
   }, []);
 
   return {
-    data,
     error,
     isLoading,
     reconnect: connect,

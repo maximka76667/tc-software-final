@@ -19,7 +19,7 @@ export const statusHandlers: Record<
 export const NUMBER_GRAPHICS_ELEMENTS = 10;
 
 // Ping pong consts
-export const PING_INTERVAL = 1000;
+export const PING_INTERVAL = 2000;
 export const PING_TIMEOUT = 500; // Timeout for sending fault command if pong doesn't arrive
 export const FAULT_INTERVAL = 1000;
 

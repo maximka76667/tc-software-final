@@ -10,17 +10,20 @@ interface CommandButtonProps {
 }
 
 const CommandButton = ({ command, sendCommand }: CommandButtonProps) => {
-  const { error, isLoading, currentState } = useWebSocketStore(
-    useShallow((state) => ({
-      error: state.error,
-      isLoading: state.isLoading,
-      currentState: state.currentState,
-    }))
-  );
+  const { error, isLoading, currentState, isFaultConfirmed } =
+    useWebSocketStore(
+      useShallow((state) => ({
+        error: state.error,
+        isLoading: state.isLoading,
+        currentState: state.currentState,
+        isFaultConfirmed: state.isFaultConfirmed,
+      }))
+    );
 
   const isDisabled =
     isLoading ||
     error ||
+    isFaultConfirmed ||
     !stateTransitions[currentState].includes(command as Command);
 
   return (

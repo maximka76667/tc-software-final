@@ -3,17 +3,18 @@ import { useWebSocketStore } from "../../store";
 import { useShallow } from "zustand/react/shallow";
 
 const StatusBox = () => {
-  const { error, isLoading } = useWebSocketStore(
+  const { error, isLoading, isFaultConfirmed } = useWebSocketStore(
     useShallow((state) => ({
       error: state.error,
       isLoading: state.isLoading,
+      isFaultConfirmed: state.isFaultConfirmed,
     }))
   );
 
   return (
     <p className="text-center">
       Status:{" "}
-      {error ? (
+      {error || isFaultConfirmed ? (
         <span className="text-red-700 font-medium">Offline</span>
       ) : isLoading ? (
         <span className="text-gray-700 font-medium">Connecting...</span>

@@ -8,7 +8,7 @@ interface useKeepAliveProps {
 }
 
 const useKeepAlive = ({ sendCommand }: useKeepAliveProps) => {
-  const { isFaultConfirmed } = useWebSocketStore();
+  const { isFaultConfirmed, setIsFaultConfirmed } = useWebSocketStore();
 
   // Ping pong states
   const [isFault, setIsFault] = useState(false);
@@ -36,7 +36,12 @@ const useKeepAlive = ({ sendCommand }: useKeepAliveProps) => {
       setupTimeout(pingIntervalId);
       // console.log("Sending ping...");
 
+      const start = Date.now();
+
       const res = await fetchKeepAlive("ping");
+
+      const end = Date.now();
+      console.log(`Elapsed: ${end - start} ms`);
 
       if (res?.pong) {
         // console.log("Pong received!");
@@ -55,12 +60,6 @@ const useKeepAlive = ({ sendCommand }: useKeepAliveProps) => {
       setIsPingFailed(true);
     }
   };
-
-  // Clear pong timeout since we got a response
-  if (pongTimeoutRef.current) {
-    clearTimeout(pongTimeoutRef.current);
-    pongTimeoutRef.current = null;
-  }
 
   useEffect(() => {
     // Start sending pings
@@ -81,6 +80,9 @@ const useKeepAlive = ({ sendCommand }: useKeepAliveProps) => {
 
       if (isFaultConfirmed || isPingFailed) {
         clearInterval(intervalId);
+        if (!isFaultConfirmed) {
+          setIsFaultConfirmed(true);
+        }
       }
     }
 
