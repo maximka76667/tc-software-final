@@ -11,9 +11,9 @@ export const fetchKeepAlive = async (endpoint: string) => {
 
     if (!res.ok) throw new Error("Ping failed");
     return await res.json();
-    
+
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (_: unknown) {
-      return { error: "Failed to send command" };
+    return { error: "Failed to send command" };
   }
 };
