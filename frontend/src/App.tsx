@@ -14,6 +14,7 @@ import useWebSocket from "./hooks/useWebSocket";
 import { useWebSocketStore } from "./store";
 
 import SuspenseLoading from "./components/SuspenseLoading";
+import { WS_BASE_URL } from "./lib/consts";
 
 const Home = lazy(() => import("./pages/Home"));
 const Control = lazy(() => import("./pages/Control"));
@@ -37,7 +38,7 @@ function App() {
   };
 
   const { reconnect, sendCommand } = useWebSocket({
-    url: "ws://localhost:6789",
+    url: WS_BASE_URL,
     onTelemetryExtras: handleTelemetryExtras,
     onMessage: addMessage,
     onConnectionError: handleConnectionError,
