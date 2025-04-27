@@ -20,6 +20,11 @@ const Home = lazy(() => import("./pages/Home"));
 const Control = lazy(() => import("./pages/Control"));
 const Viewer = lazy(() => import("./pages/Viewer"));
 
+const navLinkClassName = ({ isActive }: { isActive: boolean }) =>
+  `${
+    isActive ? "text-indigo-800" : "text-indigo-400"
+  } nav-link hover:text-indigo-900 transition-all`;
+
 function App() {
   const { setCurrentState, addMessage, setAngles } = useWebSocketStore();
 
@@ -55,13 +60,19 @@ function App() {
       <nav className="flex justify-center m-5 mb-10">
         <ul className="flex gap-10">
           <li>
-            <NavLink to="/">Home</NavLink>
+            <NavLink className={navLinkClassName} to="/">
+              Home
+            </NavLink>
           </li>
           <li>
-            <NavLink to={"/control"}>Control</NavLink>
+            <NavLink className={navLinkClassName} to={"/control"}>
+              Control
+            </NavLink>
           </li>
           <li>
-            <NavLink to={"/viewer"}>Viewer</NavLink>
+            <NavLink className={navLinkClassName} to={"/viewer"}>
+              Viewer
+            </NavLink>
           </li>
         </ul>
       </nav>
