@@ -8,8 +8,6 @@ interface ChartsBoxProps {
   data: { [key: string]: number };
 }
 
-// Make all telemetrics active by default
-
 const Charts = ({ data }: ChartsBoxProps) => {
   const { activeCharts, toggleChart } = useTelemetryStore(
     useShallow((state) => ({
