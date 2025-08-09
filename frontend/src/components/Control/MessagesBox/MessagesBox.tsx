@@ -1,6 +1,6 @@
 import { memo, useEffect, useRef } from "react";
-import "../styles/MessagesBox.css";
-import { useWebSocketStore } from "../../store";
+import "./MessagesBox.css";
+import { useWebSocketStore } from "../../../store";
 import { useShallow } from "zustand/react/shallow";
 
 const MessagesBox = () => {
@@ -17,6 +17,7 @@ const MessagesBox = () => {
 
   return (
     <div
+      role="region"
       ref={messageEndRef}
       className="message-box px-6 py-4 mt-10 rounded-3xl mx-8 h-[300px] overflow-y-scroll"
     >

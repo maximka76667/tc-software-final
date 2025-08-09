@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { useWebSocketStore } from "../../store";
+import { useWebSocketStore } from "../../../store";
 import { useShallow } from "zustand/react/shallow";
 
 const StatusBox = () => {

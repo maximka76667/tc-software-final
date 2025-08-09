@@ -1,7 +1,7 @@
-import { useWebSocketStore } from "../../store";
-import { stateTransitions } from "../../lib/consts";
-import { Command } from "../../lib/definitions";
-import { capitalizeWords } from "../../lib/utils";
+import { useWebSocketStore } from "../../../store";
+import { stateTransitions } from "../../../lib/consts";
+import { Command } from "../../../lib/definitions";
+import { capitalizeWords } from "../../../lib/utils";
 import { useShallow } from "zustand/react/shallow";
 
 interface CommandButtonProps {

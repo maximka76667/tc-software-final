@@ -5,12 +5,22 @@ import { useShallow } from "zustand/react/shallow";
 import SuspenseLoading from "../components/SuspenseLoading";
 
 // Lazy load the components
-const Charts = lazy(() => import("../components/Control/Charts"));
-const MessagesBox = lazy(() => import("../components/Control/MessagesBox"));
-const StatusBox = lazy(() => import("../components/Control/StatusBox"));
-const Reconnect = lazy(() => import("../components/Control/Reconnect"));
-const CommandsBox = lazy(() => import("../components/Control/CommandsBox"));
-const CurrentState = lazy(() => import("../components/Control/CurrentState"));
+const Charts = lazy(() => import("../components/Control/Charts/Charts"));
+const MessagesBox = lazy(
+  () => import("../components/Control/MessagesBox/MessagesBox")
+);
+const StatusBox = lazy(
+  () => import("../components/Control/StatusBox/StatusBox")
+);
+const Reconnect = lazy(
+  () => import("../components/Control/Reconnect/Reconnect")
+);
+const CommandsBox = lazy(
+  () => import("../components/Control/CommandsBox/CommandsBox")
+);
+const CurrentState = lazy(
+  () => import("../components/Control/CurrentState/CurrentState")
+);
 
 interface ControlProps {
   reconnect: () => void;

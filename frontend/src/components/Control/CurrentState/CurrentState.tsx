@@ -1,5 +1,5 @@
-import { useWebSocketStore } from "../../store";
-import { capitalizeWords } from "../../lib/utils";
+import { useWebSocketStore } from "../../../store";
+import { capitalizeWords } from "../../../lib/utils";
 import { memo } from "react";
 import { useShallow } from "zustand/react/shallow";
 

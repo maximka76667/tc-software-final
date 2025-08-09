@@ -1,7 +1,7 @@
 import { Fragment, memo } from "react";
-import ChartWrapper from "./ChartWrapper";
-import { telemetryMetrics } from "../../lib/consts";
-import { useTelemetryStore } from "../../store";
+import ChartWrapper from "../ChartWrapper/ChartWrapper";
+import { telemetryMetrics } from "../../../lib/consts";
+import { useTelemetryStore } from "../../../store";
 import { useShallow } from "zustand/react/shallow";
 
 interface ChartsBoxProps {
@@ -43,7 +43,9 @@ const Charts = ({ data }: ChartsBoxProps) => {
                 activeCharts.includes(metric.label) ? "flex" : "hidden"
               }`}
             >
-              <ChartWrapper data={data} metric={metric} />
+              {activeCharts.includes(metric.label) && (
+                <ChartWrapper data={data} metric={metric} />
+              )}
             </div>
           </Fragment>
         ))}

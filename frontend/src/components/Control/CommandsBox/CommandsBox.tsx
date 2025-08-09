@@ -1,6 +1,6 @@
 import { memo } from "react";
-import { commands } from "../../lib/consts";
-import CommandButton from "./CommandButton";
+import { commands } from "../../../lib/consts";
+import CommandButton from "../CommandButton/CommandButton";
 
 interface CommandsBoxProps {
   sendCommand: (message: string) => void;

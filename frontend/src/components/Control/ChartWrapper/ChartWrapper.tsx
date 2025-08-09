@@ -1,9 +1,9 @@
 import { LineChart } from "@mui/x-charts";
 import { memo } from "react";
-import { arrayUntil } from "../../lib/utils";
-import { NUMBER_GRAPHICS_ELEMENTS } from "../../lib/consts";
-import { useTelemetryStore } from "../../store";
-import { Telemetry } from "../../lib/definitions";
+import { arrayUntil } from "../../../lib/utils";
+import { NUMBER_GRAPHICS_ELEMENTS } from "../../../lib/consts";
+import { useTelemetryStore } from "../../../store";
+import { Telemetry } from "../../../lib/definitions";
 import { useShallow } from "zustand/react/shallow";
 
 interface ChartWrapper {
